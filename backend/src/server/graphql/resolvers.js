@@ -15,6 +15,7 @@ module.exports = {
         ...UserResolver.Query
     },
     Mutation: {
-        ...defaultResolver.Mutation
+        ...defaultResolver.Mutation,
+        ...UserResolver.Mutation
     }
 }

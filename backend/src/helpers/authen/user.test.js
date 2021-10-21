@@ -1,8 +1,8 @@
 const {UserAuthentication}=require('./user')
 const {TokenValidation}=require('./token')
 const testUser={
-    id:123,
-    role:3,
+    id:"123",
+    role:"3",
     name:"Tan"
 }
 test('user validation',()=>{
@@ -12,8 +12,8 @@ test('user validation',()=>{
     const userAuthen=new UserAuthentication(jwt)
     
     const userID=userAuthen.authenUserIdentity()
-    const userRole=userAuthen.authenUserAuthorization()
+    const userRole=userAuthen.authenUserRole()
     // run test
-    expect(userID).toBe(123)
-    expect(userRole).toBe(3)
+    expect( userID).toBe("123")
+    expect( userRole).toBe("3")
 })

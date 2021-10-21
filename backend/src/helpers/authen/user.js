@@ -1,21 +1,42 @@
 const { TokenValidation } = require('./token')
-
+const { errorFormater } = require('../format/error')
+const validator = require('validator')
 
 class UserAuthentication {
     constructor(jwt) {
-        if (typeof jwt !== 'string') {
-            throw new Error("Bad JWT!")
-        }
+        if (typeof jwt !== 'string')
+            throw new Error("Bad JWT!");
 
-        const validator = new TokenValidation()
-        this.user = validator.validateJWT(jwt)
+
+        const validator = new TokenValidation();
+        this.user = validator.validateJWT(jwt);
+
+        if (typeof this.user !== 'object')
+            throw new Error("Bad USER!");
 
     }
     authenUserIdentity() {
-        return this.user?.id || -1
+        try {
+            const { id } = this.user;
+            if (!validator.isNumeric(id + ''))
+                 throw new Error("bad token");
+
+            return id;
+        } catch ({ message }) {
+            return errorFormater(message)
+        }
     }
-    authenUserAuthorization() {
-        return this.user?.role || -1
+    authenUserRole() {
+        try {
+            const { role } = this.user;
+            
+            if (!validator.isNumeric(role + ''))
+                 throw new Error("bad token");
+
+            return role;
+        } catch ({ message }) {
+            return errorFormater(message)
+        }
     }
 
 }
