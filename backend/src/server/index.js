@@ -22,6 +22,11 @@ function startApolloServer(typeDefs, resolvers) {
         const server = new ApolloServer({
             typeDefs,
             resolvers,
+            context:({req})=>{
+                const {authorization=""} = req.headers
+                
+                return {authorization}
+            },
             plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
         });
         await server.start();

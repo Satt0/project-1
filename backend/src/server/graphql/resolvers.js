@@ -1,8 +1,8 @@
 const UserResolver=require('../../models/users/resolvers')
-
+const {authenticate}=require('../../helpers/authen/resolver')
 const defaultResolver = {
     Query: {
-        test: () => "query works!"
+        test: authenticate(0,() => "query works!")
     },
     Mutation: {
         test: () => "mutation works!"

@@ -46,7 +46,7 @@ class UserSignup {
             const response = await DB.query(this.text, this.values)
             if (response.rowCount === 1)
                 return response.rows[0]
-            throw new Error("USER NOT FOUND!")
+            throw new Error("CANNOT SIGNUP!")
         } catch ({ message }) {
             return errorFormater(message)
         }
