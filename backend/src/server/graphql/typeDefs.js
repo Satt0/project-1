@@ -3,6 +3,7 @@ const {gql}=require('apollo-server');
 // typeDefs
 const ProductTypeDef=require('../../models/products/typeDef')
 const UserTypeDef=require('../../models/users/typeDef')
+const CategoryTypeDef=require('../../models/categories/typeDef')
 
 const DefaultTypeDef=gql`
    type Query {
@@ -13,4 +14,4 @@ const DefaultTypeDef=gql`
    }
 `
 
-module.exports=[DefaultTypeDef,ProductTypeDef,UserTypeDef]
+module.exports=[DefaultTypeDef,CategoryTypeDef,UserTypeDef,ProductTypeDef]

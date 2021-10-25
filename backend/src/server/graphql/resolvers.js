@@ -1,4 +1,7 @@
 const UserResolver=require('../../models/users/resolvers')
+const CategoryResolver=require('../../models/categories/resolvers')
+
+
 const {authenticate}=require('../../helpers/authen/resolver')
 const defaultResolver = {
     Query: {
@@ -10,8 +13,10 @@ const defaultResolver = {
 }
 
 module.exports = {
+    Category:CategoryResolver.root,
     Query: {
         ...defaultResolver.Query,
+        ...CategoryResolver.Query,
         ...UserResolver.Query
     },
     Mutation: {
