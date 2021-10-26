@@ -13,9 +13,19 @@ module.exports= gql`
         depth:Int!
         parent_id:Int
     }
+    input newCategory{
+        name:String!
+        parent_id:Int
+        slug:String!
+        depth:Int!
+    }
+
     extend type Query{
        
         getCategory(input:inputCategory!):[Category!]!
+    }
+    extend type Mutation{
+        createCategory(input:newCategory!):Category!
     }
 
 `

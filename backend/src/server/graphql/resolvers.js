@@ -21,6 +21,7 @@ module.exports = {
     },
     Mutation: {
         ...defaultResolver.Mutation,
-        ...UserResolver.Mutation
+        ...UserResolver.Mutation,
+        ...CategoryResolver.Mutation
     }
 }
