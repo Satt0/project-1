@@ -23,7 +23,7 @@ function startApolloServer(typeDefs, resolvers) {
             typeDefs,
             resolvers,
             context:({req})=>{
-                const {authorization=""} = req.headers
+                const {authorization} = req.headers
                 
                 return {authorization}
             },

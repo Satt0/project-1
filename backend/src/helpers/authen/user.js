@@ -1,42 +1,39 @@
 const { TokenValidation } = require('./token')
 const { errorFormater } = require('../format/error')
+const {UserInputError}=require('apollo-server')
 const validator = require('validator')
 
 class UserAuthentication {
     constructor(jwt) {
         if (typeof jwt !== 'string')
-            throw new Error("Bad JWT!");
+            throw new UserInputError("no jwt found!");
 
 
         const validator = new TokenValidation();
         this.user = validator.validateJWT(jwt);
 
         if (typeof this.user !== 'object')
-            throw new Error("Bad USER!");
+            throw new UserInputError("jwt is corupted or missing!");
 
     }
     authenUserIdentity() {
-        try {
+      
             const { id } = this.user;
             if (!validator.isNumeric(id + ''))
-                 throw new Error("bad token");
+                 throw new UserInputError("there is no user!");
 
             return id;
-        } catch ({ message }) {
-            return errorFormater(message)
-        }
+       
     }
     authenUserRole() {
-        try {
+       
             const { role } = this.user;
             
             if (!validator.isNumeric(role + ''))
-                 throw new Error("bad token");
+                 throw new UserInputError("there is no user!");
 
             return role;
-        } catch ({ message }) {
-            return errorFormater(message)
-        }
+       
     }
 
 }
