@@ -25,8 +25,10 @@ class CategoryManament {
     editChild(updatedChild) {
 
     }
-    deleteChild(child_id) {
-
+    async deleteChild(target_id) {
+        
+        this.target_id=target_id;
+        return await this._queryDeleteChild()
     }
     // database queries
     async _queryGetAllChild() {
@@ -75,6 +77,19 @@ class CategoryManament {
         if (response.rowCount >= 1) return response.rows[0]
 
         return {}
+    }
+    async _queryDeleteChild(){
+        try{
+            const text=`DELETE from ${process.env.PG_CATEGORY_TABLE} where id=$1;`
+            const values=[this.target_id];
+
+            await DB.query(text,values);
+
+            return true
+
+        }catch(e){
+            return false;
+        }
     }
 
 }

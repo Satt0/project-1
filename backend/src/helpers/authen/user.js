@@ -1,6 +1,6 @@
 const { TokenValidation } = require('./token')
 const { errorFormater } = require('../format/error')
-const {UserInputError}=require('apollo-server')
+const { UserInputError } = require('apollo-server')
 const validator = require('validator')
 
 class UserAuthentication {
@@ -10,30 +10,33 @@ class UserAuthentication {
 
 
         const validator = new TokenValidation();
-        this.user = validator.validateJWT(jwt);
 
-        if (typeof this.user !== 'object')
+        const user = validator.validateJWT(jwt.substring('Bearer '.length));
+
+        if (typeof user !== 'object')
             throw new UserInputError("jwt is corupted or missing!");
+        this.user=user;
+        return;
 
     }
     authenUserIdentity() {
-      
-            const { id } = this.user;
-            if (!validator.isNumeric(id + ''))
-                 throw new UserInputError("there is no user!");
 
-            return id;
-       
+        const { id } = this.user;
+        if (!validator.isNumeric(id + ''))
+            throw new UserInputError("there is no user!");
+
+        return id;
+
     }
     authenUserRole() {
-       
-            const { role } = this.user;
-            
-            if (!validator.isNumeric(role + ''))
-                 throw new UserInputError("there is no user!");
 
-            return role;
-       
+        const { role } = this.user;
+
+        if (!validator.isNumeric(role + ''))
+            throw new UserInputError("there is no user!");
+
+        return role;
+
     }
 
 }
