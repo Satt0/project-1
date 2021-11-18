@@ -1,14 +1,9 @@
 import LoginPage from './authen'
-
+import CreateProductPage from './admin/CreateProduct'
 
 
 const routes=[
-    {
-        path:'/',
-        name:'public/homepage',
-        Page:LoginPage,
-        role:-1
-    },
+    
     {
         path:'/filter',
         name:'public/search_for_products',
@@ -39,12 +34,7 @@ const routes=[
         Page:LoginPage,
         role:0
     },
-    {
-        path:'/admin',
-        name:'admin/dashboard',
-        Page:LoginPage,
-        role:1
-    },
+    
     {
         path:'/admin/all-product',
         name:'admin/view_all_products',
@@ -54,7 +44,7 @@ const routes=[
     {
         path:'/admin/create-product',
         name:'admin/create_a_product',
-        Page:LoginPage,
+        Page:CreateProductPage,
         role:1
     },
     {
@@ -63,5 +53,17 @@ const routes=[
         Page:LoginPage,
         role:1
     },
+    {
+        path:'/admin',
+        name:'admin/dashboard',
+        Page:LoginPage,
+        role:1
+    },
+    {
+        path:'/',
+        name:'public/homepage',
+        Page:LoginPage,
+        role:-1
+    }
 ]
 export default routes

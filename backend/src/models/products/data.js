@@ -68,7 +68,7 @@ class ProductInit {
         `
         const values = [targetID, cate];
         const { rows } = await this.client.query(texts, values);
-        console.log(rows);
+
         return rows[0]
     }
     async _appendVariant() {
@@ -106,33 +106,107 @@ class ProductInit {
             `
         const values = [variant_id, upload_id, index];
         const { rowCount, rows } = await this.client.query(texts, values)
-        console.log(variant_id, upload_id, index, rows);
+
         if (rowCount < 1) throw new Error("cannot insert Image")
         return rows[0]
 
     }
 }
 
-class ProductManagement {
+class ProductQuery {
     constructor() {
 
     }
-    async getProduct({ id, slug,limit=1 }) {
-        console.log(validator.isEmpty(id+''),slug,limit);
-        if (validator.isEmpty(id + '') && validator.isEmpty(slug + '')) throw new UserInputError("both id and slug are empty")
+    async getProduct({ id }) {
+
+
 
         this.query = `
             SELECT * FROM ${process.env.PG_PRODUCT_TABLE}
-            WHERE ${validator.isEmpty(id + '') ? "id=$1" : "id is not null "} and ${validator.isEmpty(slug + '') ? "slug=$2" : "slug is not null"}
-            LIMIT ${Math.max(limit,20)};
+            WHERE id=$1
+            LIMIT 1;
         `
-        this.values = [id, slug].filter(e => !validator.isEmpty(e + ''))
+        this.values = [id]
         const { rows } = await DB.query(this.query, this.values);
-        return rows;
+        console.log(rows, id);
+        return rows[0];
+
+    }
+    async getCategories({ id }) {
+        const text = `
+        select id,name,slug,parent_id,depth from ${process.env.PG_P_C_TABLE} pc
+        join ${process.env.PG_CATEGORY_TABLE} cate
+        on pc.category_id=cate.id
+        where pc.product_id=$1
+        ;
+        `
+        const values = [id]
+
+        const { rows } = await DB.query(text, values)
+
+        return rows
+    }
+    async getAllVariants({ id }) {
+        const text = `
+        SELECT * 
+        FROM ${process.env.PG_PRODUCTS_VARIANTS_TABLE} pv
+        where pv.product_id=$1;
+        `
+        const values = [id]
+
+        const { rows } = await DB.query(text, values)
+
+        return rows
+    }
+    async getAllVariantImages({ id }) {
+        const text = `
+        select * from ${process.env.PG_TABLE_VARIANT_IMAGES} vu
+        join ${process.env.PG_UPLOAD_TABLE} up
+        on vu.upload_id=up.id
+        where vu.variant_id=$1;
+        `
+        const values = [id]
+
+        const { rows } = await DB.query(text, values)
+
+        return rows
+    }
+}
+class ProductMutation {
+    constructor(update) {
+        const {variants,name,slug}=update;
+        this.updatedProduct=update
+     }
+
+    async UPDATE() {
+        const client = await DB.connect()
+        try {
+            await client.query("BEGIN")
+
+
+
+
+            await client.query("COMMIT")
+            return this.updatedProduct;
+        } catch (e) {
+            await client.query("ROLLBACK")
+            
+        } finally {
+            await client.release()
+        }
+    }
+
+    async updateCategories() {
+
+    }
+    async updateVariantsImages() {
+
+    }
+    async updateOneVariants() {
 
     }
 }
 
 
-module.exports = { ProductInit, ProductManagement }
+module.exports = { ProductMutation, ProductQuery, ProductInit }
 

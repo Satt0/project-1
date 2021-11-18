@@ -14,7 +14,7 @@ const defaultResolver = {
 
 module.exports = {
     Category:CategoryResolver.root,
-    Product:ProductResolver.root,
+    ...ProductResolver.root,
     Query: {
         ...defaultResolver.Query,
         ...CategoryResolver.Query,

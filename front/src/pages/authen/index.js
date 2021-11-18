@@ -20,7 +20,7 @@ const useAuthen = () => {
     // { loading, error, data }
     const [getUser, loginData] = useLazyQuery(USER_LOGIN);
     const [createUser, signupData] = useMutation(USER_SIGNUP);
-    const dispatch=useDispatch();
+    const dispatch = useDispatch();
 
     const onLogin = ({ username, password }) => {
         getUser({
@@ -55,7 +55,7 @@ const useAuthen = () => {
 
 
 
-    }, [loginData])
+    }, [loginData, dispatch])
     React.useEffect(() => {
 
         const { loading, error, data } = signupData;
@@ -68,7 +68,7 @@ const useAuthen = () => {
 
 
 
-    }, [signupData])
+    }, [signupData, dispatch])
 
     return { onLogin, onSignUp }
 }

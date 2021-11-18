@@ -1,11 +1,14 @@
-import {Switch,Route} from 'react-router'
+import { Switch, Route } from 'react-router'
 import routes from 'pages/routes';
+import Layout from 'components/Layout';
 function App() {
   return (
     <div className="App">
-      <Switch>
-      {routes.map((route,index)=><Route key={'page-'+index} component={route.Page}></Route>)}
-      </Switch>
+      <Layout>
+        <Switch>
+          {routes.map((route, index) => <Route path={route.path} exact key={'page-' + index} component={route.Page}></Route>)}
+        </Switch>
+      </Layout>
     </div>
   );
 }

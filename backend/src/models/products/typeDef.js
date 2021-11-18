@@ -12,7 +12,7 @@ module.exports= gql`
         slug:String!
         thumb:Media!
         variants:[Variant]
-        #categories:[Category!]
+        categories:[Category!]
     }
     type Variant {
         id:Int!
@@ -33,7 +33,7 @@ module.exports= gql`
         last_udpated:String!
     }
 
-    input inputProduct{
+    input inputProductCreate{
         name:String!
         status:String!
         description:String!
@@ -54,15 +54,28 @@ module.exports= gql`
         images:[Int]!
     }
     input getProductInput{
-        id:Int
-        slug:String
-        limit:Int!
+        id:Int!
+        
+       
+    }
+
+    input inputUpdateProduct{
+        id:Int!
+        name:String!
+        status:String!
+        description:String!
+        slug:String!
+        thumb:Int!
+        categories:[Int]!
+        variants:[inputVariant]!
+
     }
     extend type Mutation{
-        createProduct(input:inputProduct!):Product!
+        createProduct(input:inputProductCreate!):Product!
+        updateProduct(input:inputUpdateProduct!):Product!
     }
     extend type Query{
-        getProduct(input:getProductInput!):[Product!]!
+        getProduct(input:getProductInput!):Product!
     }
 
 
