@@ -21,10 +21,22 @@ const Query = {
     })
 }
 const Mutation = {
-    createCategory: authenticate(0, async (_, { input }, __, ___) => {
+    createCategory: authenticate(1, async (_, { input }, __, ___) => {
         const categories = new CategoryManament();
 
         return await categories.createChild(input);
+
+    }),
+    updateCategory:authenticate(1, async (_, { input }, __, ___) => {
+        const categories = new CategoryManament();
+
+        return await categories.editChild(input);
+
+    }),
+    deleteCategory:authenticate(1, async (_, { input }, __, ___) => {
+        const categories = new CategoryManament();
+
+        return await categories.deleteChild(input);
 
     })
 }

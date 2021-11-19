@@ -18,8 +18,6 @@ module.exports=gql`
         username:String!
         password:String!
         role:Int!
-        email:String
-        phone:String
     }
     extend type Query{
         signIn(input:LoginInput!):User!

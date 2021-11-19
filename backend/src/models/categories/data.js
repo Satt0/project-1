@@ -22,12 +22,25 @@ class CategoryManament {
         this.newChild = newChild;
         return await this._queryCreateOneChild();
     }
-    editChild(updatedChild) {
+    async editChild(updatedChild) {
+        const { id, name, parent_id, depth, slug } = updatedChild;
 
+        const query = `
+        UPDATE ${process.env.PG_CATEGORY_TABLE}
+	    SET name=$1, slug=$2, parent_id=$3, depth=$4
+	    WHERE id=$5 returning *;
+        `
+        const parameters = [name, slug, parent_id, depth, id]
+
+        const response = await DB.query(query, parameters)
+
+        if (response.rowCount < 1)
+            throw new Error("Cannot update!")
+        return response.rows[0]
     }
     async deleteChild(target_id) {
-        
-        this.target_id=target_id;
+
+        this.target_id = target_id;
         return await this._queryDeleteChild()
     }
     // database queries
@@ -78,16 +91,16 @@ class CategoryManament {
 
         return {}
     }
-    async _queryDeleteChild(){
-        try{
-            const text=`DELETE from ${process.env.PG_CATEGORY_TABLE} where id=$1;`
-            const values=[this.target_id];
+    async _queryDeleteChild() {
+        try {
+            const text = `DELETE from ${process.env.PG_CATEGORY_TABLE} where id=$1;`
+            const values = [this.target_id];
 
-            await DB.query(text,values);
+            await DB.query(text, values);
 
             return true
 
-        }catch(e){
+        } catch (e) {
             return false;
         }
     }

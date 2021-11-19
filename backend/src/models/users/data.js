@@ -28,14 +28,14 @@ class UserLogin {
     }
 }
 class UserSignup {
-    constructor({ username, password, role = 0, email = "", phone = "" }) {
+    constructor({ username, password, role = 0 }) {
         if (!validator.isAscii(username + '') || !validator.isAscii(password + '')) 
             throw new Error("bad signup!")
 
         this.text = `INSERT INTO ${process.env.PG_USER_TABLE} (
-        username, password, role, email, phone,date_created, last_updated )
-        VALUES ($1 , $2, $3, $4, $5 , now() , now() ) returning id,username,role, date_created, last_updated, email, phone;`
-        this.values = [username, password, role, email, phone]
+        username, password, role,date_created, last_updated )
+        VALUES ($1 , $2, $3 , now() , now() ) returning id,username,role, date_created, last_updated;`
+        this.values = [username, password, role]
            
     }
     async signup() {
