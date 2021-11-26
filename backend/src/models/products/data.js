@@ -1,6 +1,7 @@
 const DB = require('../../helpers/storage/postgres');
 const validator = require("validator")
-const { UserInputError } = require('apollo-server-core')
+const { MediaMutation } = require('../media/data')
+const { CategoryIntegration } = require('../categories/data');
 class ProductInit {
     constructor(newProduct) {
 
@@ -25,7 +26,9 @@ class ProductInit {
 
             await this._createProduct()
             await this._appendVariant()
+
             await this._appendCategories()
+
             await this.client.query("COMMIT")
 
         } catch (e) {
@@ -55,62 +58,19 @@ class ProductInit {
 
     }
     async _appendCategories() {
-        const result = await Promise.all(this.categories.map((cate) => this._createOneCategory(cate)))
 
-        this.product.categories = result
-    }
-    async _createOneCategory(cate) {
-        const targetID = this.product.id
-        const texts = `
-        INSERT INTO ${process.env.PG_TABLE_PRODUCTS_CATEGORIES}(
-            product_id, category_id)
-            VALUES ($1, $2);
-        `
-        const values = [targetID, cate];
-        const { rows } = await this.client.query(texts, values);
+        const categoryProcessor = new CategoryIntegration(this.client);
 
-        return rows[0]
+        this.product.categories = await categoryProcessor.appendCategories({ product_id: this.product.id, categories: this.categories })
     }
+
     async _appendVariant() {
-        const results = await Promise.all(this.variants.map((_, i) => this._createOneVariant(i)));
-        this.product.variants = results
+        const variantProccess = new ProductVariantManagement(this.client);
+        const result = await variantProccess.addManyVariant({ product_id: this.product.id, variants: this.variants })
+        this.product.variants = result
 
     }
-    async _createOneVariant(index) {
-        const targetID = this.product.id;
-        const query = `INSERT INTO ${process.env.PG_PRODUCTS_VARIANTS_TABLE}
-        ( name, quantity, base_price, is_discount, discount_price, is_stock, product_id,publishing_state)
-        values($1,$2,$3,$4,$5,$6,$7,true) returning *;`
-        const { name, quantity, base_price, is_discount, discount_price, is_stock, images = [] } = this.variants[index]
-        const values = [name, quantity, base_price, is_discount, discount_price, is_stock, targetID]
 
-        const { rows } = await this.client.query(query, values)
-
-
-        const variant = rows[0]
-        const appenedImages = await this._appendImages({ variant_id: variant.id, images })
-        return { ...variant, images: appenedImages }
-
-
-    }
-    async _appendImages({ variant_id, images }) {
-
-        const result = await Promise.all(images.map((upload_id, index) => this._createOneImages({ variant_id, upload_id, index })))
-        return result;
-    }
-    async _createOneImages({ variant_id, upload_id, index }) {
-        const texts = `
-        INSERT INTO ${process.env.PG_TABLE_VARIANT_IMAGES}(
-            variant_id, upload_id, "order")
-            VALUES ($1, $2, $3);
-            `
-        const values = [variant_id, upload_id, index];
-        const { rowCount, rows } = await this.client.query(texts, values)
-
-        if (rowCount < 1) throw new Error("cannot insert Image")
-        return rows[0]
-
-    }
 }
 
 class ProductQuery {
@@ -128,7 +88,7 @@ class ProductQuery {
         `
         this.values = [id]
         const { rows } = await DB.query(this.query, this.values);
-        console.log(rows, id);
+
         return rows[0];
 
     }
@@ -174,39 +134,103 @@ class ProductQuery {
 }
 class ProductMutation {
     constructor(update) {
-        const {variants,name,slug}=update;
-        this.updatedProduct=update
-     }
+        const { id, variants = [], categories = [], status, description, slug, thumb, name } = update;
+
+        this.newVariants = variants;
+        this.newCategories = categories;
+        this.updateProductValue = [name, status, description, slug, thumb, id]
+    }
 
     async UPDATE() {
-        const client = await DB.connect()
+        this.client = await DB.connect()
         try {
-            await client.query("BEGIN")
-
-
-
-
-            await client.query("COMMIT")
-            return this.updatedProduct;
+            await this.client.query("BEGIN")
+            await this.updateInformation();
+            await this.updateCategories();
+            await this.updateVariants()
+            await this.client.query("COMMIT")
+        
+            return this.product;
         } catch (e) {
-            await client.query("ROLLBACK")
+            await this.client.query("ROLLBACK")
             
+            throw new Error("Cannot update product! ")
         } finally {
-            await client.release()
+            await this.client.release()
         }
     }
-
+    async updateInformation() {
+        const texts = `
+        UPDATE ${process.env.PG_PRODUCT_TABLE}
+        SET
+        name=$1, status=$2, description=$3, last_updated=now(), slug=$4, thumb=$5
+        WHERE id=$6 
+        returning *;
+        `;
+        const { rowCount, rows } = await this.client.query(texts, this.updateProductValue)
+        if (rowCount < 1) throw new Error("Cannot update product information");
+        this.product = rows[0]
+        return;
+    }
     async updateCategories() {
+        const categoryProcessor = new CategoryIntegration(this.client);
 
-    }
-    async updateVariantsImages() {
 
-    }
-    async updateOneVariants() {
 
+        await categoryProcessor.deleteCategory({ product_id: this.product.id })
+        const result = await categoryProcessor.appendCategories({ product_id: this.product.id, categories: this.newCategories })
+        this.product.categories = result;
     }
+    async updateVariants() {
+        const variantProcces = new ProductVariantManagement(this.client);
+        await variantProcces.deleteOldVariant({ product_id: this.product.id })
+        const result = await variantProcces.addManyVariant({ product_id: this.product.id, variants: this.newVariants })
+        this.product.variants = result;
+    }
+
+
 }
 
+class ProductVariantManagement {
+    constructor(instance) {
+        this.client = instance;
+    }
+    async deleteOldVariant({ product_id }) {
+        const text = `
+        DELETE FROM ${process.env.PG_PRODUCTS_VARIANTS_TABLE} pv
+	    WHERE pv.product_id=$1;
+        `
+        const values = [product_id]
+        await this.client.query(text, values);
+    }
+    async createOneVariant(index) {
+        const targetID = this.targetID;
+
+        const query = `INSERT INTO ${process.env.PG_PRODUCTS_VARIANTS_TABLE}
+        ( name, quantity, base_price, is_discount, discount_price, is_stock, product_id,publishing_state)
+        values($1,$2,$3,$4,$5,$6,$7,true) returning *;`
+        const { name, quantity, base_price, is_discount, discount_price, is_stock, images = [] } = this.variants[index]
+        const values = [name, quantity, base_price, is_discount, discount_price, is_stock, targetID]
+
+        const { rows } = await this.client.query(query, values)
+
+
+        const variant = rows[0]
+        
+        const imageProcessor = new MediaMutation(this.client);
+        
+        const appenedImages = await imageProcessor.appendMediaVariant({ variant_id:variant.id, images })
+        return { ...variant, images: appenedImages }
+
+    }
+    async addManyVariant({ product_id, variants = [] }) {
+        
+        this.targetID = product_id;
+        this.variants = variants;
+        const results = await Promise.all(this.variants.map((_, index) => this.createOneVariant(index)));
+        return results
+    }
+}
 
 module.exports = { ProductMutation, ProductQuery, ProductInit }
 

@@ -3,7 +3,7 @@ const {gql}=require('apollo-server')
 module.exports= gql`
     type Product{
         id:Int!
-        name:Int!
+        name:String!
         status:String!
         publishing_state:Boolean!
         description:String!

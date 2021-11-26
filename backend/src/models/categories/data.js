@@ -93,6 +93,7 @@ class CategoryManament {
     }
     async _queryDeleteChild() {
         try {
+
             const text = `DELETE from ${process.env.PG_CATEGORY_TABLE} where id=$1;`
             const values = [this.target_id];
 
@@ -106,6 +107,35 @@ class CategoryManament {
     }
 
 }
+class CategoryIntegration{
+    constructor(instance){
+        this.client=instance;
+    }
+    async appendCategories({product_id,categories}) {
+        this.product_id=product_id;
+        const result = await Promise.all(categories.map((cate) => this._createOneCategory(cate)))
+        return result;
+    }
+    async _createOneCategory(cate) {
+        const targetID = this.product_id
+        const texts = `
+        INSERT INTO ${process.env.PG_TABLE_PRODUCTS_CATEGORIES}(
+            product_id, category_id)
+            VALUES ($1, $2);
+        `
+        const values = [targetID, cate];
+        const { rows } = await this.client.query(texts, values);
 
+        return rows[0]
+    }
+    async deleteCategory({product_id}){
+        const deleteOldCategory = `DELETE FROM ${process.env.PG_TABLE_PRODUCTS_CATEGORIES}
+        WHERE product_id=$1; `
+        await this.client.query(deleteOldCategory, [product_id]);
+    }
+    async deleteVariantImages({variant_id,}){
+        
+    }
+}
 
-module.exports = { CategoryManament }
+module.exports = { CategoryManament,CategoryIntegration }

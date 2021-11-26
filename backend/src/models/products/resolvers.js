@@ -1,5 +1,5 @@
 const { ProductInit, ProductQuery ,ProductMutation} = require('./data')
-
+const {MediaQuery}=require('../media/data')
 const Product = {
     categories: async ({id}, _, __, ___) => {
         const w=new ProductQuery()
@@ -10,6 +10,11 @@ const Product = {
         const w=new ProductQuery()
         const result=await w.getAllVariants({id});
         return result;
+    },
+    thumb:async ({thumb}, _, __, ___) => {
+        const w=new MediaQuery()
+        const {data}=await w.getSingleMedia({id:thumb});
+        return data
     },
 }
 const Variant={
@@ -22,7 +27,10 @@ const Variant={
 const Query = {
     getProduct: async (_, { input }, __, ___) => {
         const worker = new ProductQuery()
+
+        
         const result = await worker.getProduct(input)
+        
         return result;
     }
 
