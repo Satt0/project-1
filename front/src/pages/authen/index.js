@@ -31,16 +31,19 @@ const useAuthen = () => {
             }
         })
     }
-    const onSignUp = async ({ username, password, repassword }) => {
+    const onSignUp = async ({ username, password, repassword,role }) => {
         if (password !== repassword)
             return alert('password not match!')
         createUser({
             variables: {
                 input: {
-                    username, password, role: 0
+                    username, password, role
                 }
             }
         }).catch(e => { console.log(e.message); })
+    }
+    const setToken=(token='')=>{
+        localStorage.setItem('token',token)
     }
     React.useEffect(() => {
 
@@ -50,7 +53,7 @@ const useAuthen = () => {
         if (data) {
             const { id, token, role, username } = data.signIn;
             dispatch(login({ id, token, username, role }))
-
+            setToken(token)
         }
 
 
@@ -64,6 +67,7 @@ const useAuthen = () => {
         if (data) {
             const { id, token, role, username } = data.signUp;
             dispatch(login({ id, token, username, role }))
+            setToken(token)
         }
 
 

@@ -1,0 +1,28 @@
+.container {
+  padding: 5px;
+}
+.upload {
+  flex-direction: column;
+  margin-top: 100px;
+  border: 1px dashed blue;
+  padding: 40px 0;
+  input {
+    display: none;
+  }
+}
+.preview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  .imagesContainer {
+    overflow: hidden;
+    max-height: 100px;
+    border: 1px solid transparent;
+    &:hover {
+      border: 1px solid red;
+    }
+    img {
+      width: 100%;
+      
+    }
+  }
+}

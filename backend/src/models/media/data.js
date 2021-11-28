@@ -1,5 +1,5 @@
 const DB =require('../../helpers/storage/postgres')
-
+const fs=require('fs')
 
 class MediaQuery{
     constructor(){
@@ -44,5 +44,48 @@ class MediaMutation{
 
     }
     
+}
+class UploadMedia{
+    constructor(images){
+        this.images=images
+    }
+
+    async uploadMany(){
+         this.client=await DB.connect()
+        try{
+            await this.client.query("START");
+
+            const results=await this.images.map((img)=>this.insertOneImage(img));
+
+            await this.client.query("COMMIT")
+            return results;
+
+        }catch(e){
+            await this.client.query("ROLLBACK")
+            // delete uploaded files
+            this.images.forEach(element => {
+                fs.rm(element.path,(err)=>{
+                    console.log(err.message);
+                })
+            });
+
+        }finally{
+            await this.client.release();
+        }
+
+    }
+    async insertOneImage({path,mimetype}){
+        const text=`INSERT INTO ${process.env.PG_TABLE_UPLOAD}
+        (name,path,type)
+        VALUES($1,$2,$3)
+        RETURNING *;
+        `
+        const values=[]
+        const {rowCount,rows}=await this.client.query(text,values).catch(e=>{
+            throw new Error("Cannot insert")
+        });
+        if(rowCount<1) throw new Error("CANNOT UPDATE")
+            return rows[0]
+    }
 }
 module.exports={MediaQuery,MediaMutation}

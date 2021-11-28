@@ -19,7 +19,7 @@ function startApolloServer(typeDefs, resolvers) {
 
             const app = express();
             app.use('/rest', expressConfig)
-
+            app.use('/uploads',express.static('uploads'))
             const httpServer = http.createServer(app);
             const server = new ApolloServer({
                 typeDefs,

@@ -1,0 +1,39 @@
+
+
+.container{
+    flex-direction: column;
+}
+.groupFieldVariant{
+    display: grid;
+    grid-gap: 15px;
+    grid-auto-flow: column;
+    grid-template-rows: 1fr 1fr 1fr;
+}
+.variantItem{
+    width:100%;
+    display: grid;
+    border:2px solid rgba(0, 0, 255, 0.192);
+    padding:13px 10px;
+    border-radius: 3px;
+    grid-template-columns: 1fr 1fr;
+}
+.imagesVariant{
+    display: grid;
+    grid-template-rows: 1fr max-content;
+    &Confirm{
+        text-align: right;
+    }
+}
+.imagesPreview{
+    display:grid;
+    grid-template-columns: 1fr max-content;
+    grid-template-rows: 1fr;
+    &Left{
+        border:2px solid green;
+    }
+    &Right{
+        display: flex;
+        flex-direction: column;
+        color:red;
+    }
+}

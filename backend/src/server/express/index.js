@@ -7,6 +7,7 @@ const logger = require('morgan')
 routeConfig.use(cors())
 routeConfig.use(logger('dev'))
 
+
 const v1 = require('./routes/v1')
 
 routeConfig.use('/v1', v1)

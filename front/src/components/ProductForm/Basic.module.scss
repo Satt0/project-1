@@ -1,0 +1,28 @@
+
+.container{
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    min-height: 400px;
+    margin-top: 50px;
+    .information{
+        display:flex;
+        padding:0 15px;
+        flex-direction: column;   
+        .inputField{
+            margin-bottom:15px;
+        } 
+    }
+}
+.thumbContainer{
+    .content{
+        flex-direction: column;
+       
+        .previewThumb{
+            height:270px;
+            width:100%;
+            margin-bottom: 15px;
+            background-color: blue;
+        }
+       
+    }
+}

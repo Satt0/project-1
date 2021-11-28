@@ -6,3 +6,14 @@
     padding:0;
     box-sizing: border-box;
 }
+:root{
+    /* colors */
+
+
+
+    /* z-index */
+    --media-select:20000;
+    --category-picker:2000;
+
+    /* width */
+}
