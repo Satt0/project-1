@@ -1,16 +1,24 @@
 const route = require("express").Router();
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
-
-const cpUpload = upload.fields([ { name: 'media', maxCount: 8 }])
+const {UploadMedia}=require('./data')
+const {successFormater}=require('../../helpers/format/error')
+const cpUpload = upload.fields([ { name: 'media', maxCount: 50 }])
 route.post(
   "/upload",
   cpUpload,
-  function (req, res, next) {
-    // req.files is array of `photos` files
-    // req.body will contain the text fields, if there were any
-    console.log(req.files);
-    res.send('ok')
+  async function (req, res, next) {
+    try{
+     
+      const images=req.files.media
+      
+      const media=new UploadMedia(images)
+      const result=await media.uploadMany()
+   
+      res.json(successFormater(result))
+    }catch(e){
+      next(new Error("cannot upload"));
+    }
   }
 );
 

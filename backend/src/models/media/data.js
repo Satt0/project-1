@@ -9,14 +9,26 @@ class MediaQuery{
         const texts=`
         SELECT * FROM ${process.env.PG_UPLOAD_TABLE}
         where id=$1
-        limit 1;
+        limit 1
+        order by id desc;
         `
         const {rows,rowCount}= await DB.query(texts,[id]);
         if(rowCount>0){
             return {found:true,data:rows[0]}
         }
-        return {found:false}
+        throw new Error("NOT FOUND!")
         
+    }
+    async getManyMedia({limit=20,offset=0}){
+        const texts=`
+        SELECT * FROM ${process.env.PG_UPLOAD_TABLE}
+        limit $1
+        offset $2
+        order by id desc;
+        `
+        const values=[limit,offset]
+        const {rows}= await DB.query(texts,values);
+        return rows
     }
 }
 class MediaMutation{
@@ -48,26 +60,28 @@ class MediaMutation{
 class UploadMedia{
     constructor(images){
         this.images=images
+        
     }
 
     async uploadMany(){
          this.client=await DB.connect()
         try{
-            await this.client.query("START");
+            await this.client.query("BEGIN");
 
-            const results=await this.images.map((img)=>this.insertOneImage(img));
-
+            const results=await Promise.all(this.images.map((img)=>this.insertOneImage(img)));
+           
             await this.client.query("COMMIT")
             return results;
 
         }catch(e){
+           
             await this.client.query("ROLLBACK")
             // delete uploaded files
-            this.images.forEach(element => {
-                fs.rm(element.path,(err)=>{
-                    console.log(err.message);
-                })
-            });
+            // this.images.forEach(element => {
+            //     fs.rm(element.path,(err)=>{
+            //         console.log(err.message);
+            //     })
+            // });
 
         }finally{
             await this.client.release();
@@ -75,17 +89,18 @@ class UploadMedia{
 
     }
     async insertOneImage({path,mimetype}){
-        const text=`INSERT INTO ${process.env.PG_TABLE_UPLOAD}
-        (name,path,type)
-        VALUES($1,$2,$3)
-        RETURNING *;
+        const text=`
+        INSERT INTO ${process.env.PG_UPLOAD_TABLE}(
+             url, type, date_created, last_updated)
+            VALUES ($1, $2, now(),now())
+            RETURNING *;
         `
-        const values=[]
+        const values=[path,mimetype]
         const {rowCount,rows}=await this.client.query(text,values).catch(e=>{
             throw new Error("Cannot insert")
         });
-        if(rowCount<1) throw new Error("CANNOT UPDATE")
+        if(rowCount<1) throw new Error("CANNOT Upload images")
             return rows[0]
     }
 }
-module.exports={MediaQuery,MediaMutation}
+module.exports={MediaQuery,MediaMutation,UploadMedia}

@@ -2,7 +2,7 @@ const routeConfig = require('express').Router()
 
 const cors = require('cors')
 const logger = require('morgan')
-
+const {errorFormater}=require('../../helpers/format/error')
 
 routeConfig.use(cors())
 routeConfig.use(logger('dev'))
@@ -19,8 +19,8 @@ routeConfig.use('/v1', v1)
 
 //error handlers
 routeConfig.use(function (err, req, res, next) {
-
-    res.status(500).json({ error: true, message: err.message })
+    
+    res.status(400).json(errorFormater(err))
 })
 
 

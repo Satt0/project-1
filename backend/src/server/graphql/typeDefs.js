@@ -4,7 +4,7 @@ const {gql}=require('apollo-server');
 const ProductTypeDef=require('../../models/products/typeDef')
 const UserTypeDef=require('../../models/users/typeDef')
 const CategoryTypeDef=require('../../models/categories/typeDef')
-
+const MediaTypeDef=require('../../models/media/typeDef')
 const DefaultTypeDef=gql`
    type Query {
        test:String!
@@ -14,4 +14,4 @@ const DefaultTypeDef=gql`
    }
 `
 
-module.exports=[DefaultTypeDef,CategoryTypeDef,UserTypeDef,ProductTypeDef]
+module.exports=[DefaultTypeDef,CategoryTypeDef,UserTypeDef,ProductTypeDef,MediaTypeDef]

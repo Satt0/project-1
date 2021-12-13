@@ -6,7 +6,7 @@ function App() {
     <div className="App">
       <Layout>
         <Switch>
-          {routes.map((route, index) => <Route path={route.path} exact key={'page-' + index} component={route.Page}></Route>)}
+          {routes.map((route, index) => <Route path={route.path} key={'page-' + index} component={route.Page}></Route>)}
         </Switch>
       </Layout>
     </div>
