@@ -5,29 +5,54 @@ import {
   Checkbox,
   FormGroup,
   FormControlLabel,
-  IconButton
+  IconButton,
+  Badge,
 } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import classNames from "classnames";
 import styles from "./Variant.module.scss";
 import MediaSelect from "components/MediaSelect";
-export default function Variant() {
+import { getMediaURL } from "helpers/url/images";
+// array of variants
+export default function Variants() {
   const [thisVariant, setVariants] = React.useState([]);
   const [openForm, setOpen] = React.useState(false);
-  const onAddVariant=(newVariant)=>{
-    console.log(newVariant);
-  }
+  const onAddVariant = (newVariant) => {
+    setVariants((old) => [...old, newVariant]);
+  };
+  const onDelete = React.useCallback((index) => {
+    setVariants((old) => old.filter((_, i) => i !== index));
+  }, []);
+  const onExit = React.useCallback(() => {
+    setOpen(false);
+  }, []);
   return (
     <div className={classNames("flex-center-center", styles.container)}>
       {thisVariant.length === 0 && openForm === false && (
         <Typography>There is no Variant!</Typography>
       )}
       {thisVariant.map((v, index) => (
-        <VariantItem />
+        <div style={{ marginBottom: 10 }}>
+          <VariantItem
+            onExit={onExit}
+            order={index}
+            onDelete={onDelete}
+            preload={v}
+            type="update"
+          />
+        </div>
       ))}
-      {openForm && <VariantItem onCreate={onAddVariant} onExit={()=>{setOpen(false)}}/>}
+      {openForm && (
+        <VariantItem
+          type="create"
+          onCreate={onAddVariant}
+          onExit={() => {
+            setOpen(false);
+          }}
+        />
+      )}
       <div className="p-m">
         <Button
           onClick={() => {
@@ -51,13 +76,34 @@ const emptyVariant = {
   discount_price: 0,
   images: [],
 };
-const VariantItem = ({ onCreate, onUpdate, onDelete,onExit, type = "create" }) => {
+const VariantItem = ({
+  preload = false,
+  onCreate,
+  onUpdate,
+  onDelete,
+  onExit,
+  type = "create",
+  order = -1,
+}) => {
   const [
-    { name, quantity, is_discount, is_stock, base_price, discount_price },
+    {
+      name,
+      quantity,
+      is_discount,
+      is_stock,
+      base_price,
+      discount_price,
+      images,
+    },
     setState,
   ] = React.useState(() => {
+    if (typeof preload === "object") {
+      return preload;
+    }
     return emptyVariant;
   });
+  //const [media, setMedia] = useState([]);
+
   const handleChange = (key, type = "text") => {
     return (event) => {
       let value;
@@ -71,7 +117,7 @@ const VariantItem = ({ onCreate, onUpdate, onDelete,onExit, type = "create" }) =
         default:
           return;
       }
-      console.log(value);
+
       setState((s) => ({ ...s, [key]: value }));
     };
   };
@@ -130,12 +176,52 @@ const VariantItem = ({ onCreate, onUpdate, onDelete,onExit, type = "create" }) =
         />
       </div>
       <div className={styles.imagesVariant}>
-        <ImagePreview />
+        <ImagePreview
+          selected={images}
+          onSelect={(arr) => {
+            setState((old) => ({ ...old, images: arr }));
+          }}
+          onReset={() => {
+            setState((old) => ({ ...old, images: [] }));
+          }}
+          onFilter={(index) => {
+            setState((old) => ({
+              ...old,
+              images: old.images.filter((_, i) => i !== index),
+            }));
+          }}
+        />
         <div className={styles.imagesVariantConfirm}>
-          <Button onClick={()=>{onCreate()}} variant="outlined">Confirm</Button>
+          <Button
+            onClick={() => {
+              if (type === "create") {
+                onCreate({
+                  name,
+                  quantity,
+                  is_discount,
+                  is_stock,
+                  base_price,
+                  discount_price,
+                  images,
+                });
+              }
+              onExit();
+            }}
+            variant="outlined"
+          >
+            {type === "create" ? "CREATE" : "UPDATE"}
+          </Button>
           <span style={{ marginLeft: 5 }}></span>
-          <Button onClick={onExit} variant="outlined" color="error">
-            Cancel
+          <Button
+            onClick={() => {
+              if (type === "update") onDelete(order);
+
+              onExit();
+            }}
+            variant="outlined"
+            color="error"
+          >
+            {type === "create" ? "CANCEl" : "DELETE"}
           </Button>
         </div>
       </div>
@@ -143,12 +229,35 @@ const VariantItem = ({ onCreate, onUpdate, onDelete,onExit, type = "create" }) =
   );
 };
 
-const ImagePreview = ({onSelect,onReset}) => {
+const ImagePreview = ({ onSelect, onReset, selected = [], onFilter }) => {
   const [open, setOpen] = React.useState(false);
   return (
     <div className={styles.imagesPreview}>
-      {open && <MediaSelect onClose={() => setOpen(false)} />}
-      <div className={styles.imagesPreviewLeft}></div>
+      {open && (
+        <MediaSelect
+          type="multiple"
+          onSelect={onSelect}
+          onClose={() => setOpen(false)}
+        />
+      )}
+      <div className={styles.imagesPreviewLeft}>
+        {selected?.length <= 0 && <p>chưa có ảnh nào.</p>}
+        {selected.map((image, index) => (
+          <div className={styles.imagesPreviewLeftImage} key={image.id}>
+            <div
+              className={styles.badges}
+              onClick={() => {
+                onFilter(index);
+              }}
+            >
+              <Badge color="secondary" badgeContent={"x"}>
+                <span></span>
+              </Badge>
+            </div>
+            <img src={getMediaURL(image.url)} />
+          </div>
+        ))}
+      </div>
       <div className={styles.imagesPreviewRight}>
         <Button
           onClick={() => {
@@ -157,7 +266,7 @@ const ImagePreview = ({onSelect,onReset}) => {
         >
           <AddPhotoAlternateIcon />
         </Button>
-        <Button>
+        <Button onClick={onReset}>
           <RestartAltIcon />
         </Button>
       </div>

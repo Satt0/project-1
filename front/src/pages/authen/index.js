@@ -5,6 +5,7 @@ import { useLazyQuery, useMutation } from '@apollo/client'
 import { USER_LOGIN, USER_SIGNUP } from 'api/graphql/query/user/authen'
 import { login } from 'store/reducers/user'
 import { useDispatch } from 'react-redux'
+import { toast } from 'react-toastify'
 export default function Page() {
     const handler = useAuthen()
     return (
@@ -23,6 +24,7 @@ const useAuthen = () => {
     const dispatch = useDispatch();
 
     const onLogin = ({ username, password }) => {
+        console.log('here');
         getUser({
             variables: {
                 input: {
@@ -45,15 +47,21 @@ const useAuthen = () => {
     const setToken=(token='')=>{
         localStorage.setItem('token',token)
     }
+   
     React.useEffect(() => {
-
+        console.log('changed');
         const { loading, error, data } = loginData;
         if (loading) return;
-        if (error) return alert(error.message);
+        if (error) {
+            console.log(error.message);
+            toast(error.message)
+            return;
+        }
         if (data) {
             const { id, token, role, username } = data.signIn;
             dispatch(login({ id, token, username, role }))
             setToken(token)
+            return;
         }
 
 
@@ -63,7 +71,7 @@ const useAuthen = () => {
 
         const { loading, error, data } = signupData;
         if (loading) return;
-        if (error) return alert(error.message);
+        if (error) return toast(error.message);
         if (data) {
             const { id, token, role, username } = data.signUp;
             dispatch(login({ id, token, username, role }))

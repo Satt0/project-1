@@ -1,3 +1,4 @@
+const {MediaQuery}=require('./data')
 
 const root={
     Media:{
@@ -6,7 +7,9 @@ const root={
 }
 const Query={
     getManyMedia:async(_,{input},__,___)=>{
-        return [{id:1,url:'123',type:"img",date_created:Date.now()}]
+        
+        const data=new MediaQuery()
+        return await data.getManyMedia(input)
     },
     getOneMedia:async(_,{input},__,___)=>{
 

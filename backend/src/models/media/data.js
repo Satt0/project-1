@@ -9,8 +9,8 @@ class MediaQuery{
         const texts=`
         SELECT * FROM ${process.env.PG_UPLOAD_TABLE}
         where id=$1
-        limit 1
-        order by id desc;
+        order by id desc
+        limit 1;
         `
         const {rows,rowCount}= await DB.query(texts,[id]);
         if(rowCount>0){
@@ -22,9 +22,9 @@ class MediaQuery{
     async getManyMedia({limit=20,offset=0}){
         const texts=`
         SELECT * FROM ${process.env.PG_UPLOAD_TABLE}
+        order by id desc
         limit $1
-        offset $2
-        order by id desc;
+        offset $2;
         `
         const values=[limit,offset]
         const {rows}= await DB.query(texts,values);
@@ -76,12 +76,6 @@ class UploadMedia{
         }catch(e){
            
             await this.client.query("ROLLBACK")
-            // delete uploaded files
-            // this.images.forEach(element => {
-            //     fs.rm(element.path,(err)=>{
-            //         console.log(err.message);
-            //     })
-            // });
 
         }finally{
             await this.client.release();

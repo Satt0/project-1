@@ -2,16 +2,15 @@
   background-color: white;
   width: 100%;
   max-width: 1000px;
-  height: 100%;
+
   display: grid;
   grid-template-columns: 400px 1fr;
-  grid-template-rows: 1fr;
-  min-height: 600px;
+  grid-template-rows: 600px;
 }
-.closeButton{
+.closeButton {
   position: fixed;
-  top:15px;
-  right:15px;
+  top: 15px;
+  right: 15px;
 }
 .wrapper {
   padding: 5% 10%;
@@ -24,6 +23,10 @@
   top: 0;
   left: 0;
   z-index: var(--media-select);
+}
+.gallery {
+  padding-top: 20px;
+  display: flex;
 }
 @media screen and (max-width: 1000px) {
   .wrapper {

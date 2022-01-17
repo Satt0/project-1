@@ -20,8 +20,13 @@
         .previewThumb{
             height:270px;
             width:100%;
+            overflow: hidden;
             margin-bottom: 15px;
             background-color: blue;
+            img{
+                width:auto;
+                height:100%;
+            }
         }
        
     }

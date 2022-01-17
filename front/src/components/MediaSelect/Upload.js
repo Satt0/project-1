@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Upload.module.scss";
 import classnames from "classnames";
 import { Button, Typography } from "@mui/material";
+import { useUpload } from "api/rest/upload";
+import { toast } from "react-toastify";
 export default function Upload({ onUploadSuccess }) {
   const { images, onSetImages, inputRef, onButtonClick, onUpload } =
-    useMediaUpload();
+    useMediaUpload(onUploadSuccess);
 
   return (
     <div className={styles.container}>
@@ -49,13 +51,13 @@ const ImagePreview = ({ src }) => {
     </div>
   );
 };
-const useMediaUpload = () => {
+const useMediaUpload = (onUploadSuccess) => {
   const inputRef = React.useRef(null);
-  const [images, setImages] = React.useState([]);
-
-  const onSetImages = () => {
-    if (inputRef === null) return;
-    const preview = Array.from(inputRef.current.files).map((e) =>
+  const [images, setImages] = useState([]);
+  const [upload, { result, error }] = useUpload();
+  const onSetImages = (e) => {
+    if (e?.target?.files === undefined) return;
+    const preview = Array.from(e.target.files).map((e) =>
       URL.createObjectURL(e)
     );
 
@@ -67,12 +69,19 @@ const useMediaUpload = () => {
   const onUpload = (callback) => {
     return async () => {
       try {
+        if (inputRef?.current?.files) upload(inputRef.current.files);
       } catch (e) {
-      } finally {
-          
+        toast("Không thể upload");
       }
     };
   };
+
+  useEffect(() => {
+    if (result) {
+      toast("upload thành công!");
+      onUploadSuccess();
+    }
+  }, [result]);
 
   return { images, onSetImages, inputRef, onButtonClick, onUpload };
 };

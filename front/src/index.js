@@ -5,7 +5,8 @@ import { Provider } from 'react-redux'
 import {store} from './store'
 import {BrowserRouter as Router} from 'react-router-dom';
 import 'assets/css/global.css';
-
+import {ToastContainer} from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
 import {
   ApolloClient,
   InMemoryCache,
@@ -35,6 +36,7 @@ const client = new ApolloClient({
 
 ReactDOM.render(
   <React.StrictMode>
+    <ToastContainer/>
     <Router>
     <Provider store={store}>
       <ApolloProvider client={client}>

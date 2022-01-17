@@ -7,8 +7,12 @@ module.exports= gql`
         type:String!
         date_created:String!
     }
+    input inputMedia{
+         limit:Int!
+         offset:Int!
+    }
     extend type Query{
-         getManyMedia(limit:Int!,offset:Int!):[Media!]!
+         getManyMedia(input:inputMedia!):[Media!]!
          getOneMedia(input:Int!):Media!
     }
 

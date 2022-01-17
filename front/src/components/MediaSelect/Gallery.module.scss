@@ -1,0 +1,60 @@
+.wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.container {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 5px;
+  overflow: auto;
+  height: 100%;
+  max-height: inherit;
+  border: 2px solid rgba(128, 128, 128, 0.13);
+  border-radius: 5px;
+}
+
+.imgWrapper {
+  width: 100%;
+  position: relative;
+  height: 100px;
+  overflow: hidden;
+  border: 5px solid transparent;
+  transition: background 0.4s;
+  &:hover {
+    cursor: pointer;
+    background-color: rgba(128, 128, 128, 0.205);
+  }
+  img {
+    margin: 0 auto;
+    display: block;
+
+    width: 100%;
+    height: auto;
+  }
+
+  img.imgWidth {
+    width: 100%;
+    height: auto;
+  }
+  img.imgHeight {
+    height: 100%;
+    width: auto;
+  }
+}
+.checked {
+  border: 5px solid rgba(0, 128, 0, 0.315);
+}
+.confirmButtons {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-bottom: 5px;
+  padding-right: 15px;
+}
+.badges {
+  position: absolute;
+  top:5px;
+  right: 15px;
+}
