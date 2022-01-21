@@ -22,14 +22,13 @@ module.exports= gql`
     input oldCategory{
         id:Int!
         name:String!
-        parent_id:Int
         slug:String!
-        depth:Int!
     }
 
     extend type Query{
        
         getCategory(input:inputCategory!):[Category!]!
+        checkUniqueCategory(input:String!):Boolean!
     }
     extend type Mutation{
         createCategory(input:newCategory!):Category!

@@ -1,11 +1,13 @@
-const { CategoryManament } = require('./data')
+const { CategoryManament,CategoryQuery } = require('./data')
 const { authenticate } = require('../../helpers/authen/resolver')
 const root = {
     parent: async (child) => {
         const { parent_id } = child;
         const query = new CategoryManament();
-        return await query.getParent({ parent_id })
-
+        const response=await query.getParent({ parent_id })
+        
+        if(response) return response
+        return null
     },
     child: async ({ depth, id }) => {
         const categories = new CategoryManament();
@@ -18,7 +20,11 @@ const Query = {
         const categories = new CategoryManament();
         return await categories.getAllChild(input);
 
-    })
+    }),
+    checkUniqueCategory:async (_,{input})=>{
+        const categories = new CategoryQuery();
+        return await categories.checkUniqueCategory(input);
+    }
 }
 const Mutation = {
     createCategory: authenticate(1, async (_, { input }, __, ___) => {
