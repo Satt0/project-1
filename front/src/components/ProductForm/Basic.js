@@ -11,11 +11,16 @@ import {
 import styles from "./Basic.module.scss";
 import classNames from "classnames";
 import { getMediaURL } from "helpers/url/images";
-export default function Basic({ product, setProduct }) {
+import { useEffect } from "react";
+export default function Basic({ product, setProduct, defaultValue }) {
   return (
     <div className={styles.container}>
       <div className={styles.thumb}>
-        <ThumbInput />
+        <ThumbInput
+          onSelected={(id) => {
+            setProduct("thumb", id);
+          }}
+        />
       </div>
       <div className={styles.information}>
         <TextField
@@ -23,12 +28,16 @@ export default function Basic({ product, setProduct }) {
           id="outlined-basic"
           label="Name"
           variant="outlined"
+          value={product.name}
+          onChange={(e)=>{setProduct('name',e.target.value)}}
         />
         <TextField
           className={styles.inputField}
           id="filled-basic"
           label="Slug"
           variant="outlined"
+          value={product.slug}
+          onChange={(e)=>{setProduct('slug',e.target.value)}}
         />
         <div>
           <FormControl fullWidth>
@@ -36,12 +45,13 @@ export default function Basic({ product, setProduct }) {
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={"oke"}
+              value={product.status}
+              onChange={(e)=>{setProduct('status',e.target.value)}}
               label="Status"
             >
-              <MenuItem value={10}>Còn Hàng</MenuItem>
-              <MenuItem value={20}>Hết Hàng</MenuItem>
-              <MenuItem value={30}>Hàng Đang Về</MenuItem>
+              <MenuItem value={"con_hang"}>Còn Hàng</MenuItem>
+              <MenuItem value={"het_hang"}>Hết Hàng</MenuItem>
+              <MenuItem value={"dang_ve"}>Hàng Đang Về</MenuItem>
             </Select>
           </FormControl>
         </div>
@@ -50,7 +60,7 @@ export default function Basic({ product, setProduct }) {
   );
 }
 
-const ThumbInput = () => {
+const ThumbInput = ({ onSelected }) => {
   const [openMedia, setOpen] = React.useState(false);
   const [selected, setSelected] = React.useState({});
   const onClose = () => {
@@ -59,6 +69,9 @@ const ThumbInput = () => {
   const onOpen = () => {
     setOpen(true);
   };
+  useEffect(() => {
+    if (selected?.id) onSelected(selected.id);
+  }, [selected]);
   return (
     <div className={styles.thumbContainer}>
       {openMedia && (
@@ -70,8 +83,8 @@ const ThumbInput = () => {
         />
       )}
       <div className={classNames(styles.content, "flex-center-center")}>
-        <div className={styles.previewThumb}>
-          <img src={getMediaURL(selected?.url)} alt="" />
+        <div className={styles.previewThumb} style={{backgroundImage:`url("${getMediaURL(selected?.url)}")`}}>
+          {!selected?.url && <p className="text-center">bạn chưa chọn ảnh nào</p>}
         </div>
         <Button onClick={onOpen} variant="outlined">
           Choose Thumb

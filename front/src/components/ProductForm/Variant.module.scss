@@ -62,3 +62,14 @@
     top:5px;
     cursor: pointer;
 }
+.Minimized{
+  display: flex;
+  justify-content: space-between;
+  max-width:800px;
+  border:1px solid rgba(128, 0, 128, 0.116);
+  border-radius: 5px;
+  padding:5px;
+  margin:0 auto;
+  width: 100%;
+
+}

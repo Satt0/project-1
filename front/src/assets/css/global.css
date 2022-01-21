@@ -13,7 +13,27 @@
 
     /* z-index */
     --media-select:8888;
-    --category-picker:2000;
+    --cate-index:8888;
 
     /* width */
+}
+.DraftEditor-root{
+    min-height: 400px;
+
+}
+.img-wrapper{
+    padding:15px 20px;
+
+}
+.img-wrapper img{
+    width:100%;
+    border-radius: 5px;
+}
+.right-aligned-flex{
+    display: flex;
+    justify-content: flex-end;
+    padding:5px 0;
+}
+.react-confirm-alert-overlay{
+    z-index: 99999 !important;
 }

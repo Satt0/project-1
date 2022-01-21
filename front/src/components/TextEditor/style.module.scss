@@ -1,0 +1,12 @@
+.container {
+  height: 500px;
+  width: 100%;
+  padding: 0 50px;
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 500;
+  display: grid;
+  grid-template-rows: max-content 1fr;
+  padding-bottom: 50px;
+}

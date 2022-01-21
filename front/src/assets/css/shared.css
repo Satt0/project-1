@@ -10,3 +10,9 @@
 .p-m{
 padding:1rem;
 }
+.p-sm{
+    padding:5px !important;
+}
+.mr-sm{
+    margin-right: 5px;
+}

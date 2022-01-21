@@ -7,6 +7,7 @@ import {BrowserRouter as Router} from 'react-router-dom';
 import 'assets/css/global.css';
 import {ToastContainer} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 import {
   ApolloClient,
   InMemoryCache,

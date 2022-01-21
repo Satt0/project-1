@@ -22,7 +22,10 @@
             width:100%;
             overflow: hidden;
             margin-bottom: 15px;
-            background-color: blue;
+           // background-color: blue;
+           background-position: center;
+           background-size: cover;
+           background-repeat: no-repeat;
             img{
                 width:auto;
                 height:100%;

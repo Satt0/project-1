@@ -1,0 +1,91 @@
+
+.container{
+    position: fixed;
+    padding:12vh 5vw;
+    width:100vw;
+    height:100vh;
+    background-color: rgba(0, 0, 0, 0.349);
+    z-index: var(--cate-index);
+    top:0;
+    left:0;
+    display: flex;
+    
+}
+.main{
+    background-color: white;
+    width: 100%; 
+   display: grid;
+   grid-template-rows: max-content 1fr;
+    
+}
+.panel{
+    --border:rgba(128, 128, 128, 0.473);
+    border:1px solid var(--border);
+    border-bottom: transparent;
+    border-right: 1px solid transparent;
+    display: inline-block;
+    overflow-y: auto;
+    min-width: 240px;
+    height: 100%;
+    &:last-child{
+        border-right: 1px solid var(--border);
+    }
+}
+.panels{
+    overflow-x: auto;
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+}
+.item{
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.459);
+    
+}
+.checked{
+    background-color: rgba(0, 128, 0, 0.178);
+}
+.formCreateCate{
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    padding:15px;
+    border-radius: 5px;
+}
+.createCate{
+    display: flex;
+    flex-direction: column;
+    input{
+        width :100%;
+    }
+}
+.createCateButton{
+    display: flex;
+    justify-content: space-between;
+    
+    
+    button{
+        padding:5 15px;
+    }
+}
+.cateInfor{
+    padding-left: 3px;
+    cursor: pointer;
+    p:last-child{
+        font-size: .9em;
+        color:gray;
+    }
+}
+.createCateWrapper{
+    position: fixed;
+    top:0;
+    left:0;
+    width:100vw;
+    height:100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(160, 160, 160, 0.363);
+}
