@@ -40,6 +40,19 @@ class CategoryManament {
     this.target_id = target_id;
     return await this._queryDeleteChild();
   }
+  async countAll({id}){
+    try{
+      const text=`
+      SELECT COUNT(*) from ${process.env.PG_TABLE_PRODUCTS_CATEGORIES} cnts
+      where cnts.category_id=$1;
+      `
+      const {rows}=await DB.query(text,[id])
+      return parseInt(rows[0]?.count) || 0
+    }catch(e){
+      console.log(e.message);
+      throw new Error("không thể tìm số lượng!")
+    }
+  }
   // database queries
   async _queryGetAllChild() {
     if (validator.isNumeric(this.parent_id + "")) {

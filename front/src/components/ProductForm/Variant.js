@@ -16,8 +16,8 @@ import styles from "./Variant.module.scss";
 import MediaSelect from "components/MediaSelect";
 import { getMediaURL } from "helpers/url/images";
 // array of variants
-export default function Variants({ setProduct }) {
-  const [thisVariant, setVariants] = React.useState([]);
+export default function Variants({ setProduct,preload=[] }) {
+  const [thisVariant, setVariants] = React.useState(preload);
   const [openForm, setOpen] = React.useState(false);
   const onAddVariant = (newVariant) => {
     setVariants((old) => [...old, newVariant]);
@@ -51,7 +51,7 @@ export default function Variants({ setProduct }) {
         <Typography>There is no Variant!</Typography>
       )}
       {thisVariant.map((v, index) => (
-        <div style={{ marginBottom: 10 ,width:"100%"}}>
+        <div style={{ marginBottom: 10, width: "100%" }}>
           <VariantItem
             responsive={true}
             onExit={onExit}
@@ -164,46 +164,54 @@ const VariantItem = ({
   return (
     <div>
       {isMinmized === true && responsive === true && (
-       
-          <div className={styles.Minimized}>
-              <div>
-                <Typography>Tên sản phẩm: {name}</Typography>
-              </div>
-            <Button onClick={()=>{setMinimized(false)}} variant="outlined" color="secondary">
-              {isMinmized ? "Show" : "Hide"}
-            </Button>
+        <div className={styles.Minimized}>
+          <div>
+            <Typography>Tên sản phẩm: {name}</Typography>
           </div>
-         
-        
+          <Button
+            onClick={() => {
+              setMinimized(false);
+            }}
+            variant="outlined"
+            color="secondary"
+          >
+            {isMinmized ? "Show" : "Hide"}
+          </Button>
+        </div>
       )}
       {isMinmized === false && (
-        <form className={styles.variantItem} onSubmit={(e)=>{
-          e.preventDefault();
-          if (type === "create") {
-            onCreate({
-              name,
-              quantity,
-              is_discount,
-              is_stock,
-              base_price,
-              discount_price,
-              images,
-            });
-          }
-          if (type === "update") {
-            setChanged(false);
-            onUpdate({
-              name,
-              quantity,
-              is_discount,
-              is_stock,
-              base_price,
-              discount_price,
-              images,
-            });
-          }
-          onExit();
-        }}>
+        <form
+          className={styles.variantItem}
+          onSubmit={(e) => {
+            e.preventDefault();
+
+            if (type === "create") {
+              onCreate({
+                name,
+                quantity,
+                is_discount,
+                is_stock,
+                base_price,
+                discount_price,
+                images,
+              });
+            }
+            if (type === "update") {
+              setChanged(false);
+              onUpdate({
+                name,
+                quantity,
+                is_discount,
+                is_stock,
+                base_price,
+                discount_price,
+                images,
+              });
+            }
+            onExit();
+            e.stopPropagation();
+          }}
+        >
           <div className={styles.groupFieldVariant}>
             <TextField
               error={name.length === 0}
@@ -256,7 +264,7 @@ const VariantItem = ({
               helperText="Giá giảm phải nhỏ hơn giá gốc."
               type="number"
               label="giá sau khi giảm"
-              required={is_discount===true}
+              required={is_discount === true}
               disabled={is_discount === false}
             />
           </div>
@@ -280,9 +288,6 @@ const VariantItem = ({
               <Button
                 disabled={type === "update" && changed === false}
                 type="submit"
-                // onClick={() => {
-                 
-                // }}
                 variant="outlined"
               >
                 {type === "create" ? "CREATE" : `UPDATE${changed ? "" : "D"}`}

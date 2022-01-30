@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styles from './authen.module.scss'
 import AuthenForm from 'components/AuthenForm'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import { USER_LOGIN, USER_SIGNUP } from 'api/graphql/query/user/authen'
 import { login } from 'store/reducers/user'
-import { useDispatch } from 'react-redux'
+import { useDispatch,useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
+import { useHistory } from 'react-router'
 export default function Page() {
     const handler = useAuthen()
     return (
@@ -22,9 +23,10 @@ const useAuthen = () => {
     const [getUser, loginData] = useLazyQuery(USER_LOGIN);
     const [createUser, signupData] = useMutation(USER_SIGNUP);
     const dispatch = useDispatch();
-
+    const url=useHistory()
+    const user=useSelector(state=>state.user)
     const onLogin = ({ username, password }) => {
-        console.log('here');
+       
         getUser({
             variables: {
                 input: {
@@ -47,9 +49,17 @@ const useAuthen = () => {
     const setToken=(token='')=>{
         localStorage.setItem('token',token)
     }
-   
+    useEffect(()=>{
+        const {role=-1}=user;
+        if(role>=0){
+            switch(role){
+                case 1:return url.push('/admin');
+                default:return url.push('/');
+            }
+        }
+    },[user])
     React.useEffect(() => {
-        console.log('changed');
+       
         const { loading, error, data } = loginData;
         if (loading) return;
         if (error) {

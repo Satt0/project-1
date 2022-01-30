@@ -6,8 +6,8 @@ import MediaSelect from "components/MediaSelect";
 import { useState } from "react";
 import { getMediaURL } from "helpers/url/images";
 import { useEffect } from "react";
-export default function App({ setState }) {
-  const [html, setHtml] = React.useState("");
+export default function App({ setState ,preload=""}) {
+  const [html, setHtml] = React.useState(preload);
   const [showMedia, setShowMedia] = useState(false);
   function onChange(e) {
     setHtml(e.target.value);

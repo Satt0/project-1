@@ -1,0 +1,32 @@
+.container{
+    margin-top: 45px;
+}
+.form{
+    width:100%;
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    grid-template-rows: 35px;
+    background-color: rgba(128, 128, 128, 0.11);
+   
+    button,input{
+        border:none;
+        background-color: transparent;
+        padding:5px;
+    }
+    button{
+        background-color: gray;
+    }
+}
+.display{
+    display: grid;
+    padding-top: 10px;
+    &.grid{
+        grid-template-columns: repeat(3,1fr);
+        grid-template-rows: repeat(3,max-content);
+        grid-gap: 15px;
+    }
+    &.detail{
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(9,max-content);
+    }
+}

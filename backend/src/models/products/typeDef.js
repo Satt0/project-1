@@ -24,6 +24,7 @@ module.exports= gql`
         publishing_state:Boolean!
         is_stock:Boolean!
         images:[Media]!
+        origin:Product!
     }
     type Media {
         id:Int!
@@ -32,7 +33,11 @@ module.exports= gql`
         date_created:String!
         last_udpated:String!
     }
-
+    type ProductFilter{
+        products:[Variant!]!
+        totalPage:Int!
+        currentPage:Int!
+    }
     input inputProductCreate{
         name:String!
         status:String!
@@ -58,7 +63,17 @@ module.exports= gql`
         
        
     }
+    input inputFilterProduct{
+        page:Int!
+        count:Int!
+        name:String!
+        status:String!
+        lowerBoundPrice:Int!
+        upperBoundPrice:Int!
+        category:Int!
+        isAsc:Boolean!
 
+    }
     input inputUpdateProduct{
         id:Int!
         name:String!
@@ -76,6 +91,8 @@ module.exports= gql`
     }
     extend type Query{
         getProduct(input:getProductInput!):Product!
+        filterProduct(input:inputFilterProduct!):ProductFilter!
+        checkProductSlug(input:String!):Boolean!
     }
 
 

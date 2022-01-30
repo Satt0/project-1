@@ -26,7 +26,7 @@ export default function Gallery({
   const [selected, setSelected] = useState([]);
 
   const clickHandler = (item) => {
-    console.log(type);
+   
     if (type === "single") {
       setSelected([item]);
       return;
@@ -49,7 +49,7 @@ export default function Gallery({
       refetch();
     }
   }, [timeStamp]);
-  console.log(data?.getManyMedia.length);
+ 
   return (
     <div className={styles.wrapper}>
       <div className={styles.confirmButtons}>

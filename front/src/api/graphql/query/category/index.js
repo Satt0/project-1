@@ -4,12 +4,10 @@ query getCateory($input: inputCategory!){
   getCategory(input: $input) {
     id
     name
-    # child {
-    #   id
-    #   name
-    #   slug
-    #   depth
-    # }
+    count
+    child {
+      id
+    }
     slug
     depth
   }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useFullScreen } from "hooks/screen";
 import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
-import { Button, Typography, TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import {
   GET_ALL_CHILD_CATE,
   CHECK_SLUG_CATEGORY,

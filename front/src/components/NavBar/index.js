@@ -6,8 +6,10 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-
+import { useSelector } from 'react-redux';
 export default function NavBar() {
+  const user=useSelector(s=>s.user)
+  console.log(user);
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">

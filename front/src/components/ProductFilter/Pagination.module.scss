@@ -1,0 +1,14 @@
+.container{
+    display: flex;
+    padding:4px 0;
+    justify-content: center;
+    li{
+        list-style-type: none;
+        border-bottom: 2px solid transparent;
+        margin-right: 5px;
+        font-size: 1.2em;
+        &.cur{
+            border-bottom: 2px solid gray;
+        }
+    }
+}

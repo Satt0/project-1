@@ -23,6 +23,20 @@ const Variant={
         const result=await w.getAllVariantImages({id});
         return result;
     },
+    origin:async ({product_id}, _, __, ___) => {
+        const w=new ProductQuery()
+        const result=await w.getProduct({id:product_id});
+        return result;
+    },
+}
+const ProductFilter={
+    totalPage:async ({input})=>{
+        console.log(input);
+        const w=new ProductQuery()
+        const result=await w.getTotalFilterProduct(input);
+        
+        return result;
+    }
 }
 const Query = {
     getProduct: async (_, { input }, __, ___) => {
@@ -32,7 +46,18 @@ const Query = {
         const result = await worker.getProduct(input)
         
         return result;
-    }
+    },
+    filterProduct:async(_,{input})=>{
+        const w=new ProductQuery()
+        const result=await w.filterProducts(input);
+        
+        return {products:result,currentPage:input.page,input};
+    },
+    checkProductSlug:async(_,{input})=>{
+        const w=new ProductQuery()
+        const result=await w.suggestSlug(input);
+        return result
+    },
 
 }
 const Mutation = {
@@ -50,5 +75,5 @@ const Mutation = {
     }
 }
 module.exports = {
-    root:{Product,Variant}, Query, Mutation
+    root:{Product,Variant,ProductFilter}, Query, Mutation
 }

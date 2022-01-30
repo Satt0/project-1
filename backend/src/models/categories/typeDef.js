@@ -8,6 +8,7 @@ module.exports= gql`
         child:[Category!]
         slug:String!
         depth:Int!
+        count:Int!
     }
     input inputCategory{
         depth:Int!

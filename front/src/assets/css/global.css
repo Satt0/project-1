@@ -1,6 +1,6 @@
 @import "./shared.css";
 @import "./variables.css";
-
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500&display=swap');
 *{
     margin:0;
     padding:0;
@@ -14,7 +14,7 @@
     /* z-index */
     --media-select:8888;
     --cate-index:8888;
-
+    --font-filter: 'Montserrat', sans-serif;
     /* width */
 }
 .DraftEditor-root{

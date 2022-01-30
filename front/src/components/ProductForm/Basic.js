@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import MediaSelect from "components/MediaSelect";
 import {
   Button,
@@ -12,11 +12,37 @@ import styles from "./Basic.module.scss";
 import classNames from "classnames";
 import { getMediaURL } from "helpers/url/images";
 import { useEffect } from "react";
-export default function Basic({ product, setProduct, defaultValue }) {
+
+import { CHECK_PRODUCT_SLUG } from "api/graphql/query/products";
+import { useLazyQuery } from "@apollo/client";
+export default function Basic({ product, setProduct, preload }) {
+  const [checkSlug, { data: response, loading: loadingSlug }] = useLazyQuery(
+    CHECK_PRODUCT_SLUG,
+    { fetchPolicy: "no-cache" }
+  );
+  useEffect(() => {
+    let a;
+    if (product.slug.trim() !== "") {
+      a = setTimeout(() => {
+        checkSlug({ variables: { input: product.slug } });
+      }, [200]);
+    }
+    return () => {
+      clearTimeout(a);
+    };
+  }, [product.slug]);
+  const isSlugOK = useMemo(() => {
+    if (loadingSlug) return true;
+    if (product.slug.trim() === "") return false;
+    if (response?.checkProductSlug === true) return true;
+    if (preload?.slug === product.slug) return true;
+    return false;
+  }, [preload?.slug, product?.slug, response]);
   return (
     <div className={styles.container}>
       <div className={styles.thumb}>
         <ThumbInput
+          preload={preload?.thumb}
           onSelected={(id) => {
             setProduct("thumb", id);
           }}
@@ -28,16 +54,26 @@ export default function Basic({ product, setProduct, defaultValue }) {
           id="outlined-basic"
           label="Name"
           variant="outlined"
+          required
           value={product.name}
-          onChange={(e)=>{setProduct('name',e.target.value)}}
+          onChange={(e) => {
+            setProduct("name", e.target.value);
+          }}
         />
         <TextField
           className={styles.inputField}
           id="filled-basic"
           label="Slug"
           variant="outlined"
+          required
+          error={!isSlugOK}
           value={product.slug}
-          onChange={(e)=>{setProduct('slug',e.target.value)}}
+          helperText={
+            isSlugOK ? "slug có thể sử dụng" : "kiểm tra lại slug của sản phẩm"
+          }
+          onChange={(e) => {
+            setProduct("slug", e.target.value.replace(" ", "-"));
+          }}
         />
         <div>
           <FormControl fullWidth>
@@ -46,7 +82,9 @@ export default function Basic({ product, setProduct, defaultValue }) {
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               value={product.status}
-              onChange={(e)=>{setProduct('status',e.target.value)}}
+              onChange={(e) => {
+                setProduct("status", e.target.value);
+              }}
               label="Status"
             >
               <MenuItem value={"con_hang"}>Còn Hàng</MenuItem>
@@ -60,9 +98,9 @@ export default function Basic({ product, setProduct, defaultValue }) {
   );
 }
 
-const ThumbInput = ({ onSelected }) => {
+const ThumbInput = ({ onSelected, preload }) => {
   const [openMedia, setOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState({});
+  const [selected, setSelected] = React.useState(preload ?? {});
   const onClose = () => {
     setOpen(false);
   };
@@ -83,8 +121,13 @@ const ThumbInput = ({ onSelected }) => {
         />
       )}
       <div className={classNames(styles.content, "flex-center-center")}>
-        <div className={styles.previewThumb} style={{backgroundImage:`url("${getMediaURL(selected?.url)}")`}}>
-          {!selected?.url && <p className="text-center">bạn chưa chọn ảnh nào</p>}
+        <div
+          className={styles.previewThumb}
+          style={{ backgroundImage: `url("${getMediaURL(selected?.url)}")` }}
+        >
+          {!selected?.url && (
+            <p className="text-center">bạn chưa chọn ảnh nào</p>
+          )}
         </div>
         <Button onClick={onOpen} variant="outlined">
           Choose Thumb

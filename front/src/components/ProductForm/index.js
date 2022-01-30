@@ -36,10 +36,13 @@ export default function ProductForm({
     setProduct((old) => ({ ...old, [key]: value }));
   }, []);
   const [showCate, setShowCate] = useState(false);
-  const onSubmit = () => {
+  const onSubmit = useCallback(() => {
     let lock = false;
 
     return async (e) => {
+      
+      e.preventDefault();
+      e.stopPropagation();
       try {
         if (lock)
           return toast("bạn đã ấn nút này rồi, vui lòng đợi xử lý.", {
@@ -48,7 +51,9 @@ export default function ProductForm({
         lock = true;
 
         if (type === "create") {
+          await onCreate(product);
         } else if (type === "update") {
+          await onUpdate(product);
         }
 
         lock = false;
@@ -57,19 +62,21 @@ export default function ProductForm({
         return toast("có lỗi xảy ra!", { type: toast.TYPE.ERROR });
       }
     };
-  };
+  }, [product, onCreate, onUpdate]);
   return (
-    <div className={styles.container}>
+    <div className={styles.container} >
+      <form onSubmit={onSubmit()}>
       <div className="right-aligned-flex">
-        <Button color="primary" variant="contained" onClick={onSubmit()}>
-          Tạo sản phẩm
+        <Button color="primary" variant="contained" type="submit">
+          {type==='create'?"Tạo sản phẩm":"Cập nhật sản phẩm"}
         </Button>
+        <span className="p-sm"></span>
         <Button color="secondary" variant="contained">
           Hủy
         </Button>
       </div>
       <div className={styles.basic}>
-        <Basic product={product} setProduct={handleInput} />
+        <Basic preload={preload} product={product} setProduct={handleInput} />
       </div>
       <div>
         <div className="right-aligned-flex">
@@ -100,12 +107,15 @@ export default function ProductForm({
           />
         )}
       </div>
+      </form>
       <div className={styles.variant}>
-        <Variant product={product} setProduct={handleInput} />
+        <Variant preload={preload?.variants} product={product} setProduct={handleInput} />
+       
       </div>
 
       <div className={styles.description}>
         <TextEditor
+        preload={preload.description}
           setState={(text) => {
             setProduct((old) => ({ ...old, description: text }));
           }}

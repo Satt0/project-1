@@ -12,7 +12,13 @@ const root = {
     child: async ({ depth, id }) => {
         const categories = new CategoryManament();
         return await categories.getAllChild({ depth: parseInt(depth) + 1, parent_id: id });
+    },
+    count:async({id})=>{
+        const query = new CategoryManament();
+        const response=await query.countAll({ id })
+        return response
     }
+
 }
 const Query = {
 
