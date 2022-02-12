@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Filter.module.scss";
 import className from "classnames";
-import {Button} from '@mui/material'
+import { Button } from "@mui/material";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import { GET_ALL_CHILD_CATE } from "api/graphql/query/category";
-const maxInt=2147483647
+const maxInt = 2147483647;
 export default function Filter({ onFilterChange }) {
   const [filter, setFilter] = useState({
     category: -3,
     lowerBoundPrice: 0,
     upperBoundPrice: maxInt,
     changed: false,
-    isAsc:true
+    isAsc: true,
   });
 
   const onSelectPrice = ({ max = 0, min = 0 }) => {
@@ -37,19 +37,27 @@ export default function Filter({ onFilterChange }) {
     }
   }, [filter]);
   useEffect(() => {
-   
-      onFilterChange(filter);
-    
+    onFilterChange(filter);
   }, []);
   return (
     <div className={styles.container}>
       <div className={styles.main}>
         <div className={styles.priceRanges}>
           <div className={styles.priceLabel}>
-          <p>Giá</p>
-          <Button onClick={()=>{
-            setFilter(old=>({...old,isAsc:!old?.isAsc,changed:true}))
-          }} variant="outlined" color={filter.isAsc?"primary":"secondary"}>Giá {filter.isAsc?"giảm":"tăng"} dần</Button>
+            <p>Giá</p>
+            <Button
+              onClick={() => {
+                setFilter((old) => ({
+                  ...old,
+                  isAsc: !old?.isAsc,
+                  changed: true,
+                }));
+              }}
+              variant="outlined"
+              color={filter.isAsc ? "primary" : "secondary"}
+            >
+              Giá {filter.isAsc ? "giảm" : "tăng"} dần
+            </Button>
           </div>
           <Range onSelect={onSelectPrice} />
         </div>
@@ -62,7 +70,7 @@ export default function Filter({ onFilterChange }) {
   );
 }
 const defaultRanges = [
-  { id: 123, min: 0, max:maxInt, name: "Tất cả" },
+  { id: 123, min: 0, max: maxInt, name: "Tất cả" },
   { id: 1, min: 0, max: 100000, name: "dưới 100k" },
   { id: 2, min: 0, max: 500000, name: "dưới 500k" },
   { id: 3, min: 0, max: 1000000, name: "dưới 1 triệu" },
@@ -150,7 +158,7 @@ const Range = ({ onSelect }) => {
 };
 
 const Category = ({ onSelect }) => {
-  const { data, loading } = useQuery(GET_ALL_CHILD_CATE, {
+  const { data, loading, error } = useQuery(GET_ALL_CHILD_CATE, {
     variables: {
       input: {
         depth: 0,
@@ -164,6 +172,7 @@ const Category = ({ onSelect }) => {
   };
 
   if (loading) return <p>...</p>;
+  if (error) return <p>error!</p>;
   if (data) {
     return (
       <div className={styles.Category}>
@@ -193,6 +202,7 @@ const Item = ({ cate, selected, clickHandler }) => {
         parent_id: cate.id,
       },
     },
+    fetchPolicy: "no-cache",
   });
   const [show, setShow] = useState(false);
 

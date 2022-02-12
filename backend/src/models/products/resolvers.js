@@ -1,4 +1,4 @@
-const { ProductInit, ProductQuery ,ProductMutation} = require('./data')
+const { ProductInit, ProductQuery ,ProductMutation,ProductHelper} = require('./data')
 const {MediaQuery}=require('../media/data')
 const Product = {
     categories: async ({id}, _, __, ___) => {
@@ -72,6 +72,10 @@ const Mutation = {
         const worker = new ProductMutation(input);
         const result = await worker.UPDATE()
         return result
+    },
+    deleteOneProduct:async (_,{input})=>{
+        const db=new ProductHelper()
+        return await db.deleteOneProduct({id:input})
     }
 }
 module.exports = {

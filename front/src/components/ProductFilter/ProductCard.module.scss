@@ -1,19 +1,14 @@
 .container {
-  //border: 1px solid blue;
-  // padding:10px;
-  //padding-bottom: 0;
-  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.356);
   border-radius: 5px;
   overflow: hidden;
- 
-  .main{
+  border: 1px solid rgba(128, 128, 128, 0.137);
+  .main {
     display: grid;
-    padding:24px;
-    //&.grid{
+    padding: 24px;
+
     grid-template-columns: 1fr;
     grid-template-rows: 220px 1fr;
     background-color: white;
-    // }
   }
 }
 .thumb {
@@ -23,33 +18,33 @@
 .groupButtons {
   display: flex;
   justify-content: space-between;
-  button{
-      width:50%;
-      padding:5px 0;
-      border:none;
-      
-      font-size: 1.03em;
-      &:first-child{
-         // border-radius: 0 0 0 4px;
-          background-color: #EDEDED;
-          color:#2C2C2C;
-      }
-      &:last-child{
-          background-color: #6F64F8;
-         // border-radius: 0 0 4px 0;
-          color:white;
-      }
+  button {
+    width: 100%;
+    padding: 5px 0;
+    border: none;
+    cursor: pointer;
+
+    font-size: 1.03em;
+    &:first-child {
+      // border-radius: 0 0 0 4px;
+      background-color: #ededed;
+      color: #2c2c2c;
+    }
+    &:last-child {
+      background-color: #6f64f8;
+      // border-radius: 0 0 4px 0;
+      color: white;
+    }
   }
 }
-.name{
-  p:first-child{
-    
+.name {
+  p:first-child {
   }
-  p:nth-child(2){
-    color:gray;
+  p:nth-child(2) {
+    color: gray;
   }
-  p:last-child{
-    font-size: .9em;
-    color:green;
+  p:last-child {
+    font-size: 0.9em;
+    color: green;
   }
 }

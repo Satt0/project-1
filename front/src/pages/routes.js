@@ -1,7 +1,8 @@
 import LoginPage from "./authen";
 import AdminRouting from "./admin";
 import AuthenLayout from "components/AuthenLayout";
-
+import PublicRouting from "./public";
+import UserRouting from "./user";
 const routes = [
   {
     path: "/admin",
@@ -11,14 +12,29 @@ const routes = [
         <AdminRouting {...props} />
       </AuthenLayout>
     ),
-    role: 3,
+   
   },
-
   {
-    path: "/",
-    name: "public/search_for_products",
+    path: "/login",
+    name: "login",
     Page: LoginPage,
-    role: -1,
+   
   },
+  {
+    path: "/user",
+    name: "user/checkout",
+    Page: (props) => (
+      <AuthenLayout req={0}>
+        <UserRouting {...props} />
+      </AuthenLayout>
+    ),
+  },
+  {
+    path: "",
+    name: "public/search_for_products",
+    Page: PublicRouting,
+    
+  }
+
 ];
 export default routes;

@@ -22,7 +22,7 @@ const root = {
 }
 const Query = {
 
-    getCategory: authenticate(1, async (_, { input }, __, ___) => {
+    getCategory: authenticate(-1, async (_, { input }, __, ___) => {
         const categories = new CategoryManament();
         return await categories.getAllChild(input);
 

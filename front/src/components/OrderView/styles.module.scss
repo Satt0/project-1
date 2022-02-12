@@ -1,0 +1,58 @@
+
+.container{
+    max-width: 1200px;
+    padding:50px 20px;
+    margin:0 auto;
+}
+.nav{
+    display: flex;
+    justify-content: space-around;
+    padding:15px 0;
+}
+.Order{
+    display: flex;
+    padding:15px;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    border:1px solid rgba(128, 128, 128, 0.452);
+}
+.informations{
+   
+   display: grid;
+   grid-template-columns: repeat(2,max-content) 1fr;
+   grid-gap: 15px;
+   
+    width: 100%;
+   
+}
+.Buttons{
+    display: flex;
+    
+    *{
+        white-space: nowrap;
+    }
+}
+.listProducts{
+    position:absolute;
+    background-color: white;
+    border:1px solid black;
+    padding:15px 0;
+    z-index: 1555;
+    min-width: 300px;
+    display: none;
+    p{
+        text-align: center;
+    }
+    ul{
+        display: flex;
+        padding:15px;
+        flex-direction: column;
+        li{
+            list-style-type: none;
+        }
+    }
+}
+.isShow{
+    display: block;
+}

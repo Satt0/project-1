@@ -1,0 +1,17 @@
+
+.container{
+    display: flex;
+    li{
+
+        list-style-type: none;
+        margin-right: 5px;
+        font-size: 1.2em;
+        &:after{
+            content:" > ";
+            font-size:.9em;
+        }
+        &:last-child:after{
+            content:''
+        }
+    }
+}

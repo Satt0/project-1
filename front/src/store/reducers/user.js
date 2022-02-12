@@ -16,7 +16,7 @@ export const userSlice = createSlice({
       return {...action.payload,restored:true,authenticated:true}
     },
     logout: (state, _) => {
-     state={...initialState} 
+     return {...initialState} 
     }
   }
 });

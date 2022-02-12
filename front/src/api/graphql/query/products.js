@@ -66,6 +66,7 @@ query FilterProduct($input: inputFilterProduct!) {
      origin {
        id
        name
+       slug
        status
        thumb{
          id

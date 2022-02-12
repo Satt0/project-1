@@ -6,7 +6,8 @@ import { USER_LOGIN, USER_SIGNUP } from 'api/graphql/query/user/authen'
 import { login } from 'store/reducers/user'
 import { useDispatch,useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
-import { useHistory } from 'react-router'
+import { useHistory,useLocation } from 'react-router'
+
 export default function Page() {
     const handler = useAuthen()
     return (
@@ -24,6 +25,8 @@ const useAuthen = () => {
     const [createUser, signupData] = useMutation(USER_SIGNUP);
     const dispatch = useDispatch();
     const url=useHistory()
+    const params=useLocation()
+    
     const user=useSelector(state=>state.user)
     const onLogin = ({ username, password }) => {
        
@@ -35,7 +38,7 @@ const useAuthen = () => {
             }
         })
     }
-    const onSignUp = async ({ username, password, repassword,role }) => {
+    const onSignUp = async ({ username, password, repassword,role=0 }) => {
         if (password !== repassword)
             return alert('password not match!')
         createUser({
@@ -51,7 +54,11 @@ const useAuthen = () => {
     }
     useEffect(()=>{
         const {role=-1}=user;
+       
         if(role>=0){
+            if(params.search.match("goback=1")){
+                url.goBack()
+            }
             switch(role){
                 case 1:return url.push('/admin');
                 default:return url.push('/');

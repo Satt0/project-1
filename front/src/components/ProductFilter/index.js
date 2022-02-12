@@ -7,7 +7,7 @@ import Pagination from "./Pagination";
 import styles from "./style.module.scss";
 import { useEffect } from "react";
 import { setIn } from "draft-js/lib/DefaultDraftBlockRenderMap";
-export default function ProductFilter() {
+export default function ProductFilter({type="admin"}) {
   const [filter, { error, loading, data }] = useLazyQuery(FILTER_PRODUCT, {
     fetchPolicy: "no-cache",
   });
@@ -72,6 +72,7 @@ export default function ProductFilter() {
           }}
         />
         <Grid
+        type={type}
           onNameChange={(name) => {
             setInput((old) => ({ ...old, name }));
           }}

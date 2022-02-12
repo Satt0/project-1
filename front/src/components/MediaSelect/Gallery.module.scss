@@ -58,3 +58,14 @@
   top:5px;
   right: 15px;
 }
+.deleteButton{
+  position: absolute;
+  opacity: 0;
+}
+.imgWrapper{
+  &:hover{
+    .deleteButton{
+      opacity: 1;
+    }
+  }
+}

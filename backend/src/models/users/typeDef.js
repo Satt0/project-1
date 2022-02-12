@@ -9,6 +9,12 @@ module.exports=gql`
         date_created:String!
         token:String!
     }
+    type SecureUser{
+        id:Int!
+        username:String!
+        last_updated:String!
+        date_created:String!
+    }
 
     input LoginInput {
         username:String!

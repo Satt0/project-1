@@ -86,13 +86,13 @@ class ProductInit {
 
 class ProductQuery {
   constructor() {}
-  async getProduct({ id }) {
+  async getProduct({ id = -1, slug = "" }) {
     this.query = `
             SELECT * FROM ${process.env.PG_PRODUCT_TABLE}
-            WHERE id=$1
+            WHERE id=$1 or slug=$2
             LIMIT 1;
         `;
-    this.values = [id];
+    this.values = [id, slug];
     const { rows } = await DB.query(this.query, this.values);
 
     return rows[0];
@@ -411,5 +411,19 @@ class ProductVariantManagement {
     return results;
   }
 }
-
-module.exports = { ProductMutation, ProductQuery, ProductInit };
+class ProductHelper {
+  async deleteOneProduct({ id }) {
+    try {
+      const text = `
+      DELETE FROM ${process.env.PG_PRODUCT_TABLE}
+      where id=$1;
+      `;
+      await DB.query(text, [id]);
+      return true;
+    } catch (e) {
+      console.log(e.message);
+      throw new Error("can't delete!");
+    }
+  }
+}
+module.exports = { ProductMutation, ProductQuery, ProductInit ,ProductHelper};

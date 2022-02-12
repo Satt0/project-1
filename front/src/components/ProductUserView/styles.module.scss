@@ -1,0 +1,15 @@
+
+.container{
+        max-width: 1200px;
+        margin:0 auto;
+        padding-top: 50px;
+        
+}
+.main{
+        display: grid;
+        grid-template-rows: max-content;
+       // background-color: blue;
+        grid-template-columns: 1fr 1fr;
+       // grid-template-rows: 500px;
+        
+}

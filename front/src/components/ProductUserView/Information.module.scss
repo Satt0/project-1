@@ -1,0 +1,32 @@
+.container {
+  padding: 0 10px;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(3,max-content) 1fr;
+  max-height: 500px;
+}
+
+.Variant {
+  margin-top: 10px;
+  &Item {
+    margin-right: 5px;
+    border:1px solid rgba(128, 128, 128, 0.322);
+    padding:3px;
+    
+  }
+  .checked{
+    border-color: blue;
+  }
+  .ItemsContainer {
+    display: flex;
+  }
+}
+.addToCart{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding:0 15%;
+    button{
+        padding:15px 0;
+    }
+}

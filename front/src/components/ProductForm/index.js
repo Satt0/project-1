@@ -4,11 +4,13 @@ import styles from "./style.module.scss";
 import Basic from "./Basic";
 import Variant from "./Variant";
 import { Button, Typography } from "@mui/material";
-
+import { useHistory } from "react-router";
 import { useCallback } from "react";
 import TextEditor from "components/TextEditor";
 import CategoryPicker from "components/CategoryPicker";
 import { toast } from "react-toastify";
+import { useMutation } from "@apollo/client";
+import { DELETE_PRODUCT } from "api/graphql/mutation/products";
 const initState = {
   name: "",
   description: "",
@@ -31,16 +33,36 @@ export default function ProductForm({
     }
     return { ...initState };
   });
+  const url = useHistory();
 
   const handleInput = useCallback((key, value) => {
     setProduct((old) => ({ ...old, [key]: value }));
   }, []);
   const [showCate, setShowCate] = useState(false);
+  const [deleteProduct, { error: errorDelete, data: dataDelete }] = useMutation(
+    DELETE_PRODUCT,
+    { fetchPolicy: "no-cache" }
+  );
+  useEffect(() => {
+    let a;
+    if (errorDelete) {
+      return toast("không thể xóa sản phẩm!");
+    }
+    if (dataDelete) {
+      toast("xóa thành công, tự động trở về sau 5s");
+      a = setTimeout(() => {
+        url.goBack();
+      }, 5000);
+      return;
+    }
+    return () => {
+      clearTimeout(a);
+    };
+  }, [errorDelete, dataDelete]);
   const onSubmit = useCallback(() => {
     let lock = false;
 
     return async (e) => {
-      
       e.preventDefault();
       e.stopPropagation();
       try {
@@ -64,58 +86,84 @@ export default function ProductForm({
     };
   }, [product, onCreate, onUpdate]);
   return (
-    <div className={styles.container} >
+    <div className={styles.container}>
       <form onSubmit={onSubmit()}>
-      <div className="right-aligned-flex">
-        <Button color="primary" variant="contained" type="submit">
-          {type==='create'?"Tạo sản phẩm":"Cập nhật sản phẩm"}
-        </Button>
-        <span className="p-sm"></span>
-        <Button color="secondary" variant="contained">
-          Hủy
-        </Button>
-      </div>
-      <div className={styles.basic}>
-        <Basic preload={preload} product={product} setProduct={handleInput} />
-      </div>
-      <div>
         <div className="right-aligned-flex">
-          <p>
-            {product.categories.map((e) => (
-              <span>{e.name}-</span>
-            ))}
-          </p>
+          <Button color="primary" variant="contained" type="submit">
+            {type === "create" ? "Tạo sản phẩm" : "Cập nhật sản phẩm"}
+          </Button>
+          <span className="p-sm"></span>
+          {type === "update" && (
+            <Button
+              onClick={() => {
+                if (product.id)
+                  deleteProduct({
+                    variables: {
+                      input: parseInt(product.id),
+                    },
+                  });
+              }}
+              color="error"
+              variant="contained"
+            >
+              Xóa
+            </Button>
+          )}
+          <span className="p-sm"></span>
           <Button
             onClick={() => {
-              setShowCate(true);
+              url.goBack();
             }}
+            color="secondary"
             variant="contained"
-            color="primary"
           >
-            Chọn danh mục
+            Hủy
           </Button>
         </div>
-        {showCate && (
-          <CategoryPicker
-            preload={product.categories}
-            onSelect={(arr) => {
-              setProduct((old) => ({ ...old, categories: arr }));
-            }}
-            onClose={() => {
-              setShowCate(false);
-            }}
-          />
-        )}
-      </div>
-      </form>
+        <div className={styles.basic}>
+          <Basic preload={preload} product={product} setProduct={handleInput} />
+        </div>
+              </form>
+        <div>
+          <div className="right-aligned-flex">
+            <p>
+              {product.categories.map((e) => (
+                <span>{e.name}-</span>
+              ))}
+            </p>
+            <Button
+              onClick={() => {
+                setShowCate(true);
+              }}
+              variant="contained"
+              color="primary"
+            >
+              Chọn danh mục
+            </Button>
+          </div>
+          {showCate && (
+            <CategoryPicker
+              preload={product.categories}
+              onSelect={(arr) => {
+                setProduct((old) => ({ ...old, categories: arr }));
+              }}
+              onClose={() => {
+                setShowCate(false);
+              }}
+            />
+          )}
+        </div>
       <div className={styles.variant}>
-        <Variant preload={preload?.variants} product={product} setProduct={handleInput} />
-       
+        <Variant
+          preload={preload?.variants}
+          product={product}
+          setProduct={handleInput}
+        />
       </div>
 
       <div className={styles.description}>
         <TextEditor
-        preload={preload.description}
+          preload={preload.description}
           setState={(text) => {
             setProduct((old) => ({ ...old, description: text }));
           }}

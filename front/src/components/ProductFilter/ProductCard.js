@@ -28,7 +28,8 @@ export default function ProductCard({ product, type = "admin" }) {
           <p>giá: {is_discount ? discount_price : base_price} VND</p>
         </div>
       </div>
-      <AdminButtons product={product} />
+      {type==='admin' && <AdminButtons product={product} />}
+      {type==='user'&&<UserButtons product={product}/>}
     </div>
   );
 }
@@ -45,7 +46,7 @@ const AdminButtons = ({ product }) => {
         Edit
       </button>
 
-      <button>Delete</button>
+    
     </div>
   );
 };
@@ -55,9 +56,12 @@ const UserButtons = ({ product }) => {
   const url = useHistory();
   return (
     <div className={styles.groupButtons}>
-      <button>Add</button>
+      <button
+       onClick={() => {
+        url.push(`/product/${origin.slug}`);
+      }}>View</button>
 
-      <button>View</button>
+      
     </div>
   );
 };

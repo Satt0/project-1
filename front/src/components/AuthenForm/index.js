@@ -18,7 +18,7 @@ const initUser = {
   username: '',
   password: "",
   repassword: '',
-  role: 1,
+  role: 0,
 }
 export default function AuthenForm({ onLogin, onSignUp }) {
   const [hasAccount, setHasAccount] = React.useState(true);
@@ -47,8 +47,8 @@ export default function AuthenForm({ onLogin, onSignUp }) {
       {!hasAccount && <FormGroup>
         <FormControlLabel    onChange={(e)=>{
           const isChecked=e.target.checked;
-          setUser(s=>({...s,role:isChecked?2:1}))
-        }} control={<Checkbox checked={user.role===2} />} label="is Admin" />
+          setUser(s=>({...s,role:isChecked?1:0}))
+        }} control={<Checkbox checked={user.role===1} />} label="is Admin" />
       </FormGroup>}
 
       <div className={styles.buttonGroup}>

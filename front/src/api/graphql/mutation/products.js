@@ -18,3 +18,8 @@ mutation UpdateProduct($input: inputUpdateProduct!) {
   }
 }
 `
+export const DELETE_PRODUCT=gql`
+mutation DeleteOneProduct($input: Int!) {
+  deleteOneProduct(input: $input)
+}
+`

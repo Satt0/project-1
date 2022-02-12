@@ -1,5 +1,5 @@
 import React from "react";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { GET_ALL_MEDIA } from "api/graphql/query/media/media";
 import styles from "./Gallery.module.scss";
 import { useState } from "react";
@@ -8,6 +8,8 @@ import classNames from "classnames";
 import { getMediaURL } from "helpers/url/images";
 import { Button } from "@mui/material";
 import { Badge } from "@mui/material";
+import { DELETE_ONE_MEDIA } from "api/graphql/mutation/media";
+import { toast } from "react-toastify";
 export default function Gallery({
   onSelect,
   timeStamp,
@@ -26,7 +28,6 @@ export default function Gallery({
   const [selected, setSelected] = useState([]);
 
   const clickHandler = (item) => {
-   
     if (type === "single") {
       setSelected([item]);
       return;
@@ -49,7 +50,7 @@ export default function Gallery({
       refetch();
     }
   }, [timeStamp]);
- 
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.confirmButtons}>
@@ -82,7 +83,7 @@ export default function Gallery({
             });
             return (
               <div
-              key={e.id}
+                key={e.id}
                 onClick={() => {
                   clickHandler(e);
                 }}
@@ -91,6 +92,8 @@ export default function Gallery({
                   order={isFound + 1}
                   selected={isFound >= 0}
                   src={e.url}
+                  media_id={e.id}
+                  onDelete={refetch}
                 />
               </div>
             );
@@ -98,24 +101,29 @@ export default function Gallery({
         </div>
       )}
       <div>
-        <Button onClick={()=>{
-          refetch(
-           {
-              input:{
-                offset:0,
-                limit:10 + data?.getManyMedia?.length ,
-              }
-            
-          })
-        }}>More</Button>
+        <Button
+          onClick={() => {
+            refetch({
+              input: {
+                offset: 0,
+                limit: 10 + data?.getManyMedia?.length,
+              },
+            });
+          }}
+        >
+          More
+        </Button>
       </div>
     </div>
   );
 }
 
-const ResponsiveImg = ({ src, selected, order }) => {
+const ResponsiveImg = ({ src, selected, media_id, order, onDelete }) => {
   const ref = React.useRef(null);
   const [isBigWidth, setState] = useState(true);
+  const [deleteImg, { error, data }] = useMutation(DELETE_ONE_MEDIA, {
+    fetchPolicy: "no-cache",
+  });
   const loadHandler = (e) => {
     const { offsetHeight: childH } = e.target;
     const { offsetHeight: parentH } = ref.current;
@@ -125,11 +133,34 @@ const ResponsiveImg = ({ src, selected, order }) => {
       setState(false);
     } else setState(true);
   };
+  useEffect(() => {
+    if (error) {
+      return toast("không thể xóa, kiểm tra lại sản phẩm đã dùng ảnh này!",{type:toast.TYPE.ERROR});
+    }
+    if (data) {
+      onDelete();
+      return toast("xóa thành công!");
+    }
+  }, [error, data, onDelete]);
   return (
     <div
       className={classNames(styles.imgWrapper, { [styles.checked]: selected })}
       ref={ref}
     >
+      <div className={styles.deleteButton}>
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            deleteImg({
+              variables: {
+                input: parseInt(media_id),
+              },
+            }).catch(e=>[]);
+          }}
+        >
+          delete
+        </button>
+      </div>
       <div className={styles.badges}>
         <Badge badgeContent={order} color="primary">
           <span></span>

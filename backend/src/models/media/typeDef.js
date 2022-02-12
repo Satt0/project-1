@@ -15,5 +15,8 @@ module.exports= gql`
          getManyMedia(input:inputMedia!):[Media!]!
          getOneMedia(input:Int!):Media!
     }
+    extend type Mutation{
+         deleteOneMedia(input:Int!):Boolean!
+    }
 
 `

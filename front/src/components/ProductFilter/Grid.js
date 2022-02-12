@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./Grid.module.scss";
 import ProductCard from "./ProductCard";
 import classNames from "classnames";
-export default function Grid({ list = [], view = "grid", onNameChange }) {
+export default function Grid({ list = [], view = "grid", onNameChange ,type="admin"}) {
   const [name, setName] = useState("");
   const onSubmit = (e) => {
     e.preventDefault();
@@ -25,7 +25,7 @@ export default function Grid({ list = [], view = "grid", onNameChange }) {
       </div>
       <div className={classNames(styles.display,styles.grid)}>
         {list.map((e) => (
-          <ProductCard key={e.id} product={e}></ProductCard>
+          <ProductCard type={type} key={e.id} product={e}></ProductCard>
         ))}
         {list.length===0 && <p>Không có sản phẩm nào</p>}
       </div>
